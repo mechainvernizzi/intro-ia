@@ -641,23 +641,34 @@ nav::after  { right: 0; border-width: 0 1px 1px 0; }
 
 <script>
 const SHEET_ID = '1xH8pHYZtvS_ZqmhrsKETTKxa_Cy9VGbAGx1McOBfh7U';
-const SHEET_URL = (tab) => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
+const SHEET_URL = (tab) => `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${tab}`)}`;
 
-// ── Fetch sheet via JSON (no CORS issues) ──────────────────────
+// ── CSV parser ─────────────────────────────────────────────────
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g,'').trim());
+  return lines.slice(1).map(line => {
+    const values = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; }
+      else if (c === ',' && !inQ) { values.push(cur); cur = ''; }
+      else cur += c;
+    }
+    values.push(cur);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = (values[i]||'').replace(/^"|"$/g,'').trim(); });
+    return obj;
+  }).filter(r => Object.values(r).some(v => v));
+}
+
+// ── Fetch sheet ────────────────────────────────────────────────
 async function fetchSheet(tab) {
   try {
     const res = await fetch(SHEET_URL(tab));
     const text = await res.text();
-    // Google wraps JSON in /*O_o*/google.visualization.Query.setResponse({...});
-    const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, ''));
-    const cols = json.table.cols.map(c => c.label || c.id);
-    return (json.table.rows || []).map(row => {
-      const obj = {};
-      cols.forEach((col, i) => {
-        obj[col] = row.c[i] ? (row.c[i].v !== null && row.c[i].v !== undefined ? String(row.c[i].v) : '') : '';
-      });
-      return obj;
-    }).filter(r => Object.values(r).some(v => v));
+    return parseCSV(text);
   } catch(e) {
     console.error('Error cargando', tab, e);
     return [];
@@ -744,23 +755,73 @@ function showError(containerId, msg) {
 let mapBuilt = false;
 let TOOLS = [], TOOL_MAP = {}, activeChip = null;
 
+const TOOLS_DATA = [
+  {id:'sd',name:'Stable Diffusion',mod:['imagen'],col:'modelos',access:'open',desc:'Modelo texto-a-imagen publicado como código abierto en 2022. Base de la mayoría de las interfaces del ecosistema.',para:'Generación con control total. Variantes: SD 1.5, SDXL.',url:'https://stability.ai',related:['flux','a1111','comfyui','lora','colab','civitai','hf']},
+  {id:'flux',name:'Flux',mod:['imagen'],col:'modelos',access:'open',desc:'Nueva generación de Black Forest Labs. Mayor coherencia semántica y mejor seguimiento del prompt.',para:'Estándar actual del ecosistema open source. Variantes: Flux Dev, Flux Schnell.',url:'https://blackforestlabs.ai',related:['sd','a1111','comfyui','falai','hf']},
+  {id:'a1111',name:'Automatic 1111',mod:['imagen'],col:'opensource',access:'open',desc:'Interfaz gráfica local para Stable Diffusion y Flux. La más completa y con mayor comunidad.',para:'Control total sin escribir código. Soporta LoRAs, extensiones, inpaint.',url:'https://github.com/AUTOMATIC1111/stable-diffusion-webui',related:['sd','flux','lora','civitai']},
+  {id:'comfyui',name:'ComfyUI',mod:['imagen','video'],col:'opensource',access:'open',desc:'Interfaz basada en nodos para construir pipelines personalizados. Permite conectar APIs privadas.',para:'Workflows avanzados. Soporta Flux, SD, LTX Video, Wan.',url:'https://github.com/comfyanonymous/ComfyUI',related:['sd','flux','ltx','wan','replicate','falai']},
+  {id:'midj',name:'Midjourney',mod:['imagen'],col:'saas',access:'private',desc:'Generación vía Discord. Alta calidad estética. El más usado en producción visual profesional.',para:'Calidad visual sin configuración técnica. Requiere suscripción.',url:'https://midjourney.com',related:[]},
+  {id:'dalle',name:'DALL-E 3',mod:['imagen'],col:'saas',access:'private',desc:'Integrado en ChatGPT. Muy bueno con instrucciones complejas y texto dentro de imágenes.',para:'Generación rápida desde ChatGPT.',url:'https://openai.com/dall-e-3',related:['chatgpt']},
+  {id:'ideogram',name:'Ideogram',mod:['imagen'],col:'saas',access:'private',desc:'Especialmente bueno generando texto tipográfico dentro de imágenes.',para:'Diseño con texto integrado en la imagen. Free tier disponible.',url:'https://ideogram.ai',related:[]},
+  {id:'firefly',name:'Adobe Firefly',mod:['imagen'],col:'diseno',access:'design',desc:'Motor de IA generativa de Adobe. Entrenado con imágenes con licencia. Integrado en Photoshop e Illustrator.',para:'Generative fill, inpaint, text to vector, generative recolor en suite Adobe.',url:'https://firefly.adobe.com',related:[]},
+  {id:'canva-ai',name:'Canva AI',mod:['imagen'],col:'diseno',access:'design',desc:'IA generativa integrada en Canva: generación de imágenes, edición con texto, eliminación de fondo.',para:'Accesible para usuarios sin experiencia técnica dentro del flujo de Canva.',url:'https://canva.com',related:[]},
+  {id:'figma-ai',name:'Figma AI',mod:['imagen'],col:'diseno',access:'design',desc:'Funciones de IA nativas en Figma: generación de imágenes, renombrado automático de capas, prototipado asistido.',para:'Integrado directamente en el flujo de diseño UI/UX.',url:'https://figma.com',related:[]},
+  {id:'ltx',name:'LTX Video',mod:['video'],col:'modelos',access:'open',desc:'Uno de los primeros modelos de video open source de alta calidad. Uso eficiente de 16-bit.',para:'Video local sin depender de servicios en la nube.',url:'https://huggingface.co/Lightricks/LTX-Video',related:['comfyui','hf']},
+  {id:'wan',name:'Wan Video',mod:['video'],col:'modelos',access:'open',desc:'Alibaba. Alta calidad de movimiento y coherencia visual entre fotogramas.',para:'Generación de clips con movimientos fluidos.',url:'https://huggingface.co/Wan-AI',related:['comfyui','hf']},
+  {id:'cog',name:'CogVideoX',mod:['video'],col:'modelos',access:'open',desc:'Zhipu AI. Buena calidad en clips cortos. Accesible en hardware moderado.',para:'Generación de video open source accesible.',url:'https://huggingface.co/THUDM/CogVideoX-5b',related:['comfyui','hf']},
+  {id:'sora',name:'Sora',mod:['video'],col:'saas',access:'private',desc:'OpenAI. Video hasta 1 minuto desde texto o imagen. Calidad de referencia del mercado.',para:'Video de alta definición de calidad profesional.',url:'https://openai.com/sora',related:[]},
+  {id:'runway',name:'Runway Gen-3',mod:['video'],col:'saas',access:'private',desc:'El más usado en producción audiovisual profesional. Control fino sobre movimiento y estilo.',para:'Producción de video con control creativo avanzado.',url:'https://runwayml.com',related:['premiere','aftereffects']},
+  {id:'kling',name:'Kling',mod:['video'],col:'saas',access:'private',desc:'Alta calidad a costo menor que Sora. Muy bueno para movimientos realistas.',para:'Video con mejor relación costo/resultado.',url:'https://klingai.com',related:[]},
+  {id:'pika',name:'Pika Labs',mod:['video'],col:'saas',access:'private',desc:'Generación de clips cortos desde texto o imagen.',para:'Clips con efectos visuales. Free tier disponible.',url:'https://pika.art',related:[]},
+  {id:'premiere',name:'Premiere Pro',mod:['video'],col:'diseno',access:'design',desc:'Adobe Premiere Pro integra IA para transcripción automática, generative extend y eliminación de ruido.',para:'Speech to Text, Generative Extend, Enhance Speech.',url:'https://adobe.com/premiere',related:['runway','firefly']},
+  {id:'aftereffects',name:'After Effects',mod:['video'],col:'diseno',access:'design',desc:'After Effects integra Firefly para generación de fondos. Rotobrush con IA para recorte automático.',para:'Rotobrush AI, generación de fondos con Firefly.',url:'https://adobe.com/after-effects',related:['firefly','runway']},
+  {id:'gpt4',name:'GPT-4o',mod:['texto','codigo'],col:'modelos',access:'private',desc:'El modelo de lenguaje más extendido de OpenAI. Multimodal: procesa texto, imagen y audio.',para:'Base de ChatGPT. Punto de entrada más accesible al ecosistema.',url:'https://openai.com',related:['chatgpt','dalle']},
+  {id:'claudem',name:'Claude 3.5',mod:['texto','codigo'],col:'modelos',access:'private',desc:'Anthropic. Especialmente bueno en textos largos, análisis y razonamiento. 200.000 tokens de contexto.',para:'Análisis de documentos extensos, razonamiento complejo, escritura.',url:'https://anthropic.com',related:['claude-app']},
+  {id:'gemini-m',name:'Gemini 2.0',mod:['texto','codigo'],col:'modelos',access:'private',desc:'Google DeepMind. Integración nativa con el ecosistema Google.',para:'Flujos integrados con Drive, Docs, Gmail.',url:'https://deepmind.google/gemini',related:['gemini-app']},
+  {id:'llama',name:'Llama 3',mod:['texto','codigo'],col:'modelos',access:'open',desc:'Meta. El modelo open source más usado como base. Permite uso local sin conexión.',para:'Privacidad, uso local, sin costo por uso.',url:'https://llama.meta.com',related:['ollama','lmstudio','hf']},
+  {id:'mistral',name:'Mistral',mod:['texto','codigo'],col:'modelos',access:'open',desc:'Eficiente en hardware limitado. Muy bueno para uso local.',para:'Uso local con buena relación calidad/tamaño.',url:'https://mistral.ai',related:['ollama','lmstudio','hf']},
+  {id:'ollama',name:'Ollama',mod:['texto','codigo'],col:'opensource',access:'open',desc:'Herramienta de línea de comandos para correr LLMs localmente. Funciona como servidor local.',para:'Base para integraciones. Soporta Llama, Mistral, Qwen y más.',url:'https://ollama.com',related:['llama','mistral','lmstudio']},
+  {id:'lmstudio',name:'LM Studio',mod:['texto','codigo'],col:'opensource',access:'open',desc:'Interfaz gráfica para correr LLMs localmente. Sin terminal.',para:'La opción más accesible para correr LLMs localmente.',url:'https://lmstudio.ai',related:['llama','mistral','ollama']},
+  {id:'chatgpt',name:'ChatGPT',mod:['texto','codigo'],col:'saas',access:'private',desc:'OpenAI. El más extendido. Incluye DALL-E, ejecución de código y navegación web.',para:'Punto de entrada más accesible al ecosistema de IA.',url:'https://chat.openai.com',related:['dalle','gpt4']},
+  {id:'claude-app',name:'Claude',mod:['texto','codigo'],col:'saas',access:'private',desc:'Anthropic. Interfaz web y app móvil para Claude 3.5.',para:'Análisis de documentos, redacción, razonamiento complejo.',url:'https://claude.ai',related:['claudem']},
+  {id:'gemini-app',name:'Gemini',mod:['texto','codigo'],col:'saas',access:'private',desc:'Google. App web integrada con Drive, Docs y Gmail.',para:'Flujos de trabajo integrados en el ecosistema Google.',url:'https://gemini.google.com',related:['gemini-m']},
+  {id:'deepseek',name:'DeepSeek',mod:['texto','codigo'],col:'saas',access:'private',desc:'Modelo chino de alto rendimiento. Sorprendente relación calidad/costo.',para:'Alternativa de alto rendimiento a GPT-4 a menor costo.',url:'https://deepseek.com',related:[]},
+  {id:'notion-ai',name:'Notion AI',mod:['texto'],col:'diseno',access:'design',desc:'IA integrada en Notion para redacción, resumen, traducción y generación de contenido.',para:'Escritura asistida dentro del flujo de trabajo en Notion.',url:'https://notion.so',related:[]},
+  {id:'cursor',name:'Cursor',mod:['codigo'],col:'saas',access:'private',desc:'Editor de código con IA integrada. Autocomplete, chat con el código, refactorización asistida.',para:'Programación asistida. Usa GPT-4 y Claude como motores.',url:'https://cursor.sh',related:['gpt4','claudem']},
+  {id:'github-copilot',name:'GitHub Copilot',mod:['codigo'],col:'diseno',access:'design',desc:'IA de GitHub integrada en VS Code. Autocomplete y generación de código.',para:'Asistente de programación integrado en el entorno de desarrollo.',url:'https://github.com/features/copilot',related:['gpt4']},
+  {id:'elevenlabs',name:'ElevenLabs',mod:['sonido'],col:'saas',access:'private',desc:'Síntesis y clonación de voz de alta calidad. Líder en text-to-speech con IA.',para:'Doblaje, narración, voces personalizadas, clonación de voz.',url:'https://elevenlabs.io',related:[]},
+  {id:'suno',name:'Suno',mod:['sonido'],col:'saas',access:'private',desc:'Generación de canciones completas desde texto: voz, letra e instrumentación.',para:'Creación musical generativa sin conocimiento técnico.',url:'https://suno.com',related:['udio']},
+  {id:'udio',name:'Udio',mod:['sonido'],col:'saas',access:'private',desc:'Generación musical de alta calidad desde texto. Alternativa a Suno.',para:'Composición generativa, exploración de géneros musicales.',url:'https://udio.com',related:['suno']},
+  {id:'musicgen',name:'MusicGen',mod:['sonido'],col:'modelos',access:'open',desc:'Meta. Modelo open source para generación de música desde texto.',para:'Generación musical open source, uso local o vía Hugging Face.',url:'https://huggingface.co/facebook/musicgen-large',related:['hf']},
+  {id:'tripo3d',name:'Tripo3D',mod:['3d'],col:'saas',access:'private',desc:'Generación de modelos 3D desde texto o imagen. Alta calidad y texturizado automático.',para:'Crear assets 3D desde prompts o fotos de referencia.',url:'https://tripo3d.ai',related:[]},
+  {id:'meshy',name:'Meshy',mod:['3d'],col:'saas',access:'private',desc:'Texto o imagen a modelo 3D. Optimizado para game assets y diseño de producto.',para:'Assets 3D para juegos, diseño de producto, arquitectura.',url:'https://meshy.ai',related:[]},
+  {id:'blender-ai',name:'Blender + IA',mod:['3d'],col:'opensource',access:'open',desc:'Blender incorpora addons de IA: generación de texturas y denoising con IA.',para:'Generación de texturas con SD directamente en Blender.',url:'https://blender.org',related:['sd']},
+  {id:'replicate',name:'Replicate',mod:['agentes'],col:'saas',access:'private',desc:'Repositorio de modelos accesibles por API. Cientos de modelos sin instalación local.',para:'Usar cualquier modelo desde código o ComfyUI vía nodos.',url:'https://replicate.com',related:['comfyui']},
+  {id:'falai',name:'fal.ai',mod:['agentes'],col:'saas',access:'private',desc:'Infraestructura de IA en la nube con nodos nativos para ComfyUI.',para:'Ejecutar modelos pesados sin hardware local.',url:'https://fal.ai',related:['comfyui','flux','sd']},
+  {id:'n8n',name:'n8n',mod:['agentes'],col:'opensource',access:'open',desc:'Plataforma de automatización open source. Conecta LLMs con cualquier servicio.',para:'Automatización con IA: conectar ChatGPT, Claude o cualquier API.',url:'https://n8n.io',related:['chatgpt','claude-app']},
+  {id:'make',name:'Make',mod:['agentes'],col:'saas',access:'private',desc:'Plataforma de automatización visual. Conecta IA con miles de apps sin código.',para:'Automatización no-code con IA integrada.',url:'https://make.com',related:[]},
+  {id:'colab',name:'Google Colab',mod:['imagen','video','texto'],col:'opensource',access:'open',desc:'Entorno Python en la nube con GPUs gratuitas. Sin instalación local.',para:'Punto de entrada sin hardware propio.',url:'https://colab.research.google.com',related:['sd','flux','hf']},
+  {id:'hf',name:'Hugging Face',mod:['imagen','video','texto','sonido'],col:'opensource',access:'open',desc:'Referencia para modelos open source. Repositorio de modelos, datasets y Spaces.',para:'Acceso a los modelos más recientes.',url:'https://huggingface.co',related:['sd','flux','llama','mistral','ltx','wan','musicgen']},
+  {id:'civitai',name:'Civitai',mod:['imagen'],col:'opensource',access:'open',desc:'Portal de la comunidad para descargar modelos, LoRAs y embeddings.',para:'Encontrar modelos con ejemplos visuales.',url:'https://civitai.com',related:['sd','flux','a1111','lora']},
+  {id:'lora',name:'LoRA',mod:['imagen'],col:'modelos',access:'open',desc:'Archivos ligeros (50-200MB) que añaden estilos o conceptos al modelo base. Combinables.',para:'Estilos artísticos, personajes, tipografías, estéticas consistentes.',url:'https://civitai.com',related:['sd','flux','a1111','comfyui','civitai']},
+];
+
 async function loadAndBuildMap() {
   mapBuilt = true;
   showLoading('map-grid', 'Cargando herramientas...');
-  const rows = await fetchSheet('herramientas');
-  if (!rows.length) { showError('map-grid', 'Error al cargar datos. Verificá que la planilla esté publicada.'); return; }
-
-  TOOLS = rows.map(r => ({
-    id: r.id,
-    name: r.name,
-    mod: r.mod ? r.mod.split('|').map(s=>s.trim()) : [],
-    col: r.col,
-    access: r.access || 'private',
-    desc: r.desc || '',
-    para: r.para || '',
-    url: r.url || '',
-    related: r.related ? r.related.split('|').map(s=>s.trim()).filter(Boolean) : [],
-  }));
+  let rows = await fetchSheet('herramientas');
+  if (!rows.length) {
+    TOOLS = TOOLS_DATA;
+  } else {
+    TOOLS = rows.map(r => ({
+      id: r.id, name: r.name,
+      mod: r.mod ? r.mod.split('|').map(s=>s.trim()) : [],
+      col: r.col, access: r.access || 'private',
+      desc: r.desc || '', para: r.para || '',
+      url: r.url || '',
+      related: r.related ? r.related.split('|').map(s=>s.trim()).filter(Boolean) : [],
+    }));
+  }
   TOOLS.forEach(t => TOOL_MAP[t.id] = t);
   buildMap();
 }
@@ -938,8 +999,42 @@ async function loadAndBuildGlosario() {
   const list = document.getElementById('g-list');
   list.innerHTML = '<div style="padding:60px 40px;font-family:var(--font-mono);font-size:11px;color:var(--cyber);letter-spacing:.15em;text-transform:uppercase;">Cargando glosario...</div>';
 
-  const rows = await fetchSheet('glosario');
-  if (!rows.length) { list.innerHTML = '<div style="padding:60px 40px;font-family:var(--font-mono);font-size:11px;color:#ff3c5f;">Error al cargar datos.</div>'; return; }
+  const GLOSARIO_DATA = [
+    {term:'Algoritmo',short:'Serie de instrucciones para realizar cálculos u operaciones.',full:'Base de cualquier programa o modelo computacional. Define exactamente qué pasos seguir para resolver un problema.'},
+    {term:'Alucinación',short:'Cuando la IA genera información falsa con apariencia de verdad.',full:'Característica estructural de los LLMs. Siempre verificar datos críticos.'},
+    {term:'CFG Scale',short:'Controla qué tan estrictamente el modelo sigue el prompt.',full:'Valores 6-9: equilibrio recomendado. Valores bajos: más creatividad. Valores altos: adherencia estricta, posible distorsión.'},
+    {term:'Checkpoint',short:'Archivo con todos los pesos de un modelo entrenado.',full:'Es el modelo completo. Extensiones: .safetensors o .ckpt. Puede pesar entre 2GB y 20GB.'},
+    {term:'CLIP',short:'Modelo que conecta texto e imagen en un espacio matemático compartido.',full:'Contrastive Language-Image Pretraining, OpenAI 2021. No genera imágenes: da al modelo la coordenada semántica del texto dentro del universo visual.'},
+    {term:'CNN',short:'Red neuronal especializada en procesamiento de imágenes.',full:'Red Neuronal Convolucional. Capas tempranas: bordes. Capas medias: formas. Capas profundas: conceptos como "rostro" o "árbol".'},
+    {term:'Cosmotécnica',short:'Concepto de Yuk Hui: la técnica como expresión de una cosmología cultural.',full:'No existe una tecnología universal. Cada cultura tiene su propia relación con la técnica. Base del concepto de tecnodiversidad.'},
+    {term:'Dataset',short:'Conjunto de datos para entrenar o evaluar un modelo.',full:'Su calidad y diversidad determinan las capacidades y sesgos del modelo. Ejemplos: ImageNet (14M imágenes), LAION-5B (5.850M pares imagen-texto).'},
+    {term:'Deep Learning',short:'Aprendizaje profundo con redes neuronales de muchas capas.',full:'Subcampo del Machine Learning. Las capas profundas permiten representaciones complejas: de píxeles a bordes, de bordes a formas, de formas a conceptos abstractos.'},
+    {term:'DreamBooth',short:'Fine-tuning con 3-5 imágenes para especializar un modelo.',full:'Genera un checkpoint completo especializado en una persona, objeto o estilo. Alta consistencia en distintos contextos.'},
+    {term:'Embedding',short:'Representación numérica de un concepto en el espacio latente.',full:'Traducción del lenguaje a números. Conceptos similares tienen embeddings cercanos en el espacio matemático.'},
+    {term:'Espacio latente',short:'Mapa matemático donde el modelo representa datos de forma comprimida.',full:'No trabaja con píxeles sino con vectores. Puntos cercanos = conceptos relacionados.'},
+    {term:'Fine-tuning',short:'Continuar el entrenamiento de un modelo con datos específicos.',full:'Permite especializar el modelo en un dominio o estilo sin entrenar desde cero. Base de LoRA, DreamBooth y otros métodos.'},
+    {term:'Flux',short:'Modelo de generación de imágenes de nueva generación, open source.',full:'Desarrollado por Black Forest Labs. Estándar actual del ecosistema open source.'},
+    {term:'GAN',short:'Dos redes que compiten para generar imágenes fotorrealistas.',full:'Red Generativa Adversarial (Goodfellow, 2014). Generador vs Discriminador. Primera arquitectura en generar imágenes fotorrealistas.'},
+    {term:'GPU',short:'Hardware especializado para entrenamiento e inferencia de IA.',full:'Puede ejecutar miles de operaciones matemáticas en paralelo. Sin el avance de las GPUs NVIDIA, los modelos actuales serían inviables.'},
+    {term:'IA Generativa',short:'IA especializada en crear contenido original: texto, imagen, audio, video.',full:'Aprende patrones estadísticos de grandes volúmenes de datos para generar contenido nuevo.'},
+    {term:'Inpaint',short:'Regenerar una región específica de una imagen con un prompt.',full:'Se selecciona el área con una máscara y el modelo completa esa zona de manera coherente con el resto de la imagen.'},
+    {term:'LLM',short:'Modelo de lenguaje de gran tamaño basado en Transformers.',full:'Aprende relaciones estadísticas entre tokens. No "sabe": ha aprendido qué secuencias son probables.'},
+    {term:'LoRA',short:'Archivos ligeros que añaden estilos o conceptos al modelo base.',full:'Low-Rank Adaptation. 50-200MB vs GB de un checkpoint. Combinables sin modificar el modelo original.'},
+    {term:'Modelo de difusión',short:'Arquitectura que aprende a revertir un proceso de agregado de ruido.',full:'Entrenamiento: se agrega ruido a imágenes reales. Generación: el modelo parte de ruido y lo elimina guiado por el prompt.'},
+    {term:'Prompt',short:'Instrucción en lenguaje natural que guía la generación.',full:'En imagen: describe el contenido visual. En LLMs: puede ser pregunta, pedido, rol, contexto. El orden importa.'},
+    {term:'RAG',short:'Conecta el LLM con fuentes externas para reducir alucinaciones.',full:'Generación Aumentada por Recuperación. Antes de responder, busca información en una base confiable.'},
+    {term:'Sampler',short:'Algoritmo que guía el proceso de difusión inversa.',full:'Euler A: rápido y contrastado. DPM++ 2M Karras: suave y detallado. DDIM: ideal para video.'},
+    {term:'Seed',short:'Número inicial del generador aleatorio.',full:'Determina el ruido inicial. Seed -1 = aleatorio. Fijar un valor permite reproducir exactamente el mismo resultado.'},
+    {term:'Sesgo',short:'Tendencia a resultados parciales por los datos de entrenamiento.',full:'Los modelos reproducen y amplifican sesgos de sus datos de entrenamiento.'},
+    {term:'Steps',short:'Pasos de difusión inversa. Recomendado: 20-30.',full:'Más pasos = mayor detalle, más tiempo. Pasado cierto punto el modelo sobreajusta.'},
+    {term:'Tecnodiversidad',short:'Concepto de Yuk Hui: pluralidad de tradiciones técnicas.',full:'No existe una tecnología universal sino múltiples tradiciones técnicas ligadas a distintas cosmologías.'},
+    {term:'Token',short:'Unidad mínima de texto que procesa el modelo.',full:'Puede ser palabra, parte de palabra, signo o espacio. GPT-4: 128.000 tokens de contexto. Claude: 200.000.'},
+    {term:'Transformer',short:'Arquitectura base de todos los grandes modelos modernos.',full:'Google, 2017. Analiza todas las palabras simultáneamente con mecanismos de atención.'},
+    {term:'VAE',short:'Traduce entre el espacio de píxeles y el espacio latente.',full:'Variational Autoencoder. Encoder: comprime en el espacio latente. Decoder: traduce a píxeles visibles.'},
+  ];
+
+  let rows = await fetchSheet('glosario');
+  if (!rows.length) rows = GLOSARIO_DATA;
 
   const noRes = document.getElementById('g-no-results');
   list.innerHTML = '';
