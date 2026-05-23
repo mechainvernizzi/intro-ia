@@ -640,37 +640,18 @@ nav::after  { right: 0; border-width: 0 1px 1px 0; }
 </div>
 
 <script>
-const SHEET_ID = '1xH8pHYZtvS_ZqmhrsKETTKxa_Cy9VGbAGx1McOBfh7U';
-const SHEET_URL = (tab) => `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${tab}`)}`;
+const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzygvqs51Vd6EjBr1U5iNHOY1-FPPFURuYFO7SgSK90L1TtgTclFfGvv9GI6TABgHUBtw/exec';
 
-// ── CSV parser ─────────────────────────────────────────────────
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g,'').trim());
-  return lines.slice(1).map(line => {
-    const values = [];
-    let cur = '', inQ = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
-      if (c === '"') { inQ = !inQ; }
-      else if (c === ',' && !inQ) { values.push(cur); cur = ''; }
-      else cur += c;
-    }
-    values.push(cur);
-    const obj = {};
-    headers.forEach((h, i) => { obj[h] = (values[i]||'').replace(/^"|"$/g,'').trim(); });
-    return obj;
-  }).filter(r => Object.values(r).some(v => v));
-}
-
-// ── Fetch sheet ────────────────────────────────────────────────
 async function fetchSheet(tab) {
   try {
-    const res = await fetch(SHEET_URL(tab));
-    const text = await res.text();
-    return parseCSV(text);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(`${APPS_SCRIPT}?sheet=${encodeURIComponent(tab)}`, { signal: controller.signal });
+    clearTimeout(timeout);
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
   } catch(e) {
-    console.error('Error cargando', tab, e);
+    console.warn('Apps Script fetch falló para', tab, '— usando datos locales');
     return [];
   }
 }
