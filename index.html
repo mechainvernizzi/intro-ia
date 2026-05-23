@@ -548,18 +548,136 @@ nav::after  { right: 0; border-width: 0 1px 1px 0; }
 .glos-item:hover .g-term { color: var(--ink); }
 .g-short { font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
 .g-full {
-  display: none; margin-top: 12px; padding-top: 12px;
+  display: block; margin-top: 10px; padding-top: 10px;
   border-top: 1px solid var(--border); font-size: 12px; color: var(--ink-mid); line-height: 1.7;
 }
-.glos-item.expanded .g-full { display: block; }
-.g-toggle {
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em;
-  color: var(--cyber-blue); text-transform: uppercase; margin-top: 8px; display: inline-block;
-}
+.g-toggle { display: none; }
 .g-no-results {
   grid-column: 1/-1; padding: 64px 0; text-align: center;
   color: var(--ink-dim); font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; display: none;
 }
+
+
+/* ══════════════════════════════
+   MAPA POR CASO DE USO
+══════════════════════════════ */
+.usecase-wrap {
+  padding: 0 0 80px;
+}
+
+.usecase-filters {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 16px 48px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  align-items: center;
+}
+
+.usecase-filter {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--ink-mid);
+  transition: all .18s;
+}
+.usecase-filter:hover { color: var(--ink); border-color: var(--ink-dim); }
+.usecase-filter.active {
+  background: var(--cyber-dim); color: var(--ink); border-color: var(--cyber);
+}
+
+.usecase-section {
+  border-bottom: 1px solid var(--border);
+  padding: 48px 48px 0;
+}
+.usecase-section.hidden { display: none; }
+
+.usecase-header {
+  display: flex; align-items: baseline; gap: 16px;
+  margin-bottom: 8px;
+}
+.usecase-title {
+  font-family: var(--font-serif); font-size: clamp(22px,3vw,34px);
+  font-weight: 700; color: var(--ink); letter-spacing: -.01em;
+}
+.usecase-desc {
+  font-size: 12px; color: var(--ink-mid); line-height: 1.6;
+  max-width: 640px; margin-bottom: 32px;
+  padding-left: 16px; border-left: 2px solid var(--cyber);
+}
+
+.usecase-io {
+  display: flex; gap: 24px; margin-bottom: 32px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .1em; text-transform: uppercase;
+}
+.usecase-io-item { display: flex; align-items: center; gap: 8px; color: var(--ink-dim); }
+.usecase-io-label { color: var(--cyber); font-weight: 700; }
+
+.tools-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 48px;
+}
+
+.tool-card {
+  background: var(--paper);
+  padding: 20px 22px;
+  transition: background .16s;
+  position: relative;
+  overflow: hidden;
+}
+.tool-card::before {
+  content: ''; position: absolute; left:0; top:0; bottom:0;
+  width: 2px; background: transparent; transition: background .2s;
+}
+.tool-card:hover { background: var(--surface); }
+.tool-card:hover::before { background: var(--cyber); }
+
+.tc-name {
+  font-family: var(--font-serif); font-size: 18px; font-weight: 700;
+  color: var(--ink); margin-bottom: 2px; letter-spacing: -.01em;
+}
+.tc-maker {
+  font-family: var(--font-mono); font-size: 9px; color: var(--ink-dim);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px;
+}
+.tc-price {
+  display: inline-block;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .08em;
+  padding: 2px 7px; border: 1px solid var(--cyber);
+  color: var(--cyber); margin-bottom: 10px; text-transform: uppercase;
+}
+.tc-desc {
+  font-size: 12px; color: var(--ink-mid); line-height: 1.6; margin-bottom: 8px;
+}
+.tc-note {
+  font-size: 11px; color: var(--ink-dim); line-height: 1.5;
+  padding: 6px 8px; background: var(--cyber-dim);
+  border-left: 2px solid var(--cyber); margin-top: 8px;
+}
+.tc-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em;
+  color: var(--cyber-blue); text-decoration: none; text-transform: uppercase;
+  margin-top: 10px; transition: gap .2s;
+}
+.tc-link:hover { gap: 8px; }
+
+/* Legend */
+.uc-legend {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  padding: 14px 48px; border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.uc-legend-item {
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mid);
+  display: flex; align-items: center; gap: 6px;
+}
+.uc-legend-dot { width: 7px; height: 7px; border-radius: 50%; }
 </style>
 </head>
 <body>
@@ -579,26 +697,20 @@ nav::after  { right: 0; border-width: 0 1px 1px 0; }
 <div id="herramientas" class="page active">
   <div class="hero">
     <h1 class="hero-title reveal">Ecosistema<br><em>actual</em></h1>
-    <p class="hero-sub reveal">Herramientas organizadas por modalidad y tipo de acceso. Clic en cualquier herramienta para ver sus conexiones.</p>
+    <p class="hero-sub reveal">Herramientas organizadas por caso de uso. Clic en cada herramienta para ver más información.</p>
     <div class="hero-meta reveal">
       <div class="hero-meta-item">Scroll para explorar</div>
-      <div class="hero-meta-item">Clic para relaciones</div>
     </div>
   </div>
 
-  <div class="map-wrap">
-    <div class="map-legend reveal">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--open)"></div>Open source</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--private)"></div>Privado / SaaS</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--design)"></div>Integrado en app de diseño</div>
-      <div class="legend-hint">Clic → relaciones</div>
+  <div class="usecase-wrap">
+    <div class="uc-legend reveal">
+      <div class="uc-legend-item"><div class="uc-legend-dot" style="background:var(--open)"></div>Open source / Gratuito</div>
+      <div class="uc-legend-item"><div class="uc-legend-dot" style="background:var(--private)"></div>Privado / Freemium</div>
+      <div class="uc-legend-item"><div class="uc-legend-dot" style="background:var(--design)"></div>De pago</div>
     </div>
-    <div class="map-grid reveal" id="map-grid"></div>
-  </div>
-
-  <div class="map-panel" id="map-panel">
-    <button class="panel-close" id="panel-close">✕</button>
-    <div id="panel-body"></div>
+    <div class="usecase-filters reveal" id="uc-filters"></div>
+    <div id="uc-sections"></div>
   </div>
 </div>
 
@@ -700,82 +812,234 @@ function showPage(id) {
 }
 
 // ══════════════════════════════════
-// DATA: TOOLS
+// DATA: USE CASES
 // ══════════════════════════════════
-const A = { open:'open', private:'private', design:'design' };
-const ACCESS_COLOR = { open:'#00e5a0', private:'#00aaff', design:'#f97316' };
-const ACCESS_LABEL = { open:'Open source', private:'Privado', design:'App de diseño' };
 
-const MODALITIES = [
-  { id:'imagen',  label:'Imagen',      color:'#b06aff' },
-  { id:'video',   label:'Video',       color:'#ff3c5f' },
-  { id:'texto',   label:'Texto / LLM', color:'#00d4ff' },
-  { id:'codigo',  label:'Código',      color:'#c8ff00' },
-  { id:'sonido',  label:'Sonido',      color:'#ff69b4' },
-  { id:'3d',      label:'3D',          color:'#00ffaa' },
-  { id:'agentes', label:'Agentes',     color:'#ffd166' },
+const USE_CASES = [
+  {
+    id: 'productividad',
+    title: 'Productividad y asistencia general',
+    desc: 'Modelos de uso cotidiano para escritura, resumen, brainstorming y asistencia en tareas diversas.',
+    input: 'Texto, Voz, Imágenes, Archivos',
+    output: 'Texto, Código, Imágenes, Voz',
+    tools: [
+      { name:'ChatGPT', maker:'OpenAI', price:'Freemium ($20/mes)', access:'private',
+        desc:'El modelo más extendido. Incluye generación de imágenes, ejecución de código, navegación web y GPTs personalizados.',
+        url:'https://chatgpt.com' },
+      { name:'Ernie Bot', maker:'Baidu', price:'Freemium (Planes corporativos)', access:'private',
+        desc:'Principal asistente de IA de Baidu. Profunda integración con el ecosistema chino.',
+        note:'Disponible principalmente en China. Puede requerir VPN fuera del país.',
+        url:'https://yiyan.baidu.com/' },
+    ]
+  },
+  {
+    id: 'multimodalidad',
+    title: 'Multimodalidad y ecosistema de datos',
+    desc: 'Modelos que procesan y combinan múltiples tipos de input: texto, imágenes, audio, video y código.',
+    input: 'Texto, Imágenes, Audio, Video, Código',
+    output: 'Texto, Código, Imágenes, Audio',
+    tools: [
+      { name:'Gemini', maker:'Google', price:'Freemium ($20/mes)', access:'private',
+        desc:'Integrado con Drive, Docs y Gmail. Acceso a información en tiempo real. El más capaz en multimodalidad del ecosistema Google.',
+        url:'https://gemini.google.com' },
+      { name:'Qwen / Tongyi', maker:'Alibaba', price:'Freemium (Opciones Open source)', access:'open',
+        desc:'Modelo multimodal de Alibaba con versiones open source disponibles. Muy bueno en código y razonamiento matemático.',
+        note:'Disponible principalmente en China. Versiones open source descargables en Hugging Face.',
+        url:'https://qwenlm.github.io' },
+    ]
+  },
+  {
+    id: 'razonamiento',
+    title: 'Razonamiento complejo y lógica',
+    desc: 'Modelos especializados en tareas que requieren razonamiento profundo, análisis y precisión.',
+    input: 'Texto, Código, Archivos masivos',
+    output: 'Texto, Código de alta precisión, Lógica',
+    tools: [
+      { name:'Claude', maker:'Anthropic', price:'Freemium ($20/mes)', access:'private',
+        desc:'Especialmente bueno en textos largos, análisis y razonamiento. 200.000 tokens de contexto. Destaca en escritura y análisis de documentos extensos.',
+        url:'https://claude.ai' },
+      { name:'DeepSeek', maker:'DeepSeek', price:'Freemium (API económica)', access:'open',
+        desc:'Modelo chino de alto rendimiento. Sorprendente relación calidad/costo. Versiones open source disponibles.',
+        note:'Empresa china. Precios de API muy inferiores a competidores occidentales. Disponible globalmente.',
+        url:'https://www.deepseek.com' },
+    ]
+  },
+  {
+    id: 'busqueda',
+    title: 'Búsqueda e investigación con fuentes',
+    desc: 'Modelos orientados a la búsqueda verificada y la generación de respuestas con citas y fuentes.',
+    input: 'Texto, Enlaces, Documentos',
+    output: 'Texto estructurado con citas de fuentes',
+    tools: [
+      { name:'Perplexity AI', maker:'Perplexity', price:'Freemium ($20/mes)', access:'private',
+        desc:'Motor de búsqueda con IA. Responde con fuentes verificables y citadas. Ideal para investigación y fact-checking.',
+        url:'https://www.perplexity.ai' },
+      { name:'Tencent Yuanbao', maker:'Tencent', price:'Gratis (Ecosistema WeChat)', access:'open',
+        desc:'Asistente IA de Tencent integrado en el ecosistema WeChat.',
+        note:'Disponible principalmente en China a través del ecosistema de WeChat. No disponible globalmente.',
+        url:'https://hunyuan.tencent.com' },
+    ]
+  },
+  {
+    id: 'documentos',
+    title: 'Análisis de documentos de gran extensión',
+    desc: 'Herramientas especializadas en procesar y analizar documentos masivos, PDFs y fuentes múltiples.',
+    input: 'Documentos masivos, PDFs, Enlaces',
+    output: 'Resúmenes, Respuestas analíticas, Audio',
+    tools: [
+      { name:'NotebookLM', maker:'Google', price:'Gratis', access:'open',
+        desc:'Permite cargar documentos propios y hacer preguntas sobre ellos. Genera resúmenes en audio (podcasts). Ideal para investigación académica.',
+        url:'https://notebooklm.google' },
+      { name:'Kimi', maker:'Moonshot AI', price:'Freemium (Gran ventana gratuita)', access:'private',
+        desc:'Ventana de contexto muy grande de manera gratuita. Especializado en análisis de documentos extensos.',
+        note:'Empresa china con presencia internacional. Interfaz disponible en inglés y chino.',
+        url:'https://www.kimi.com' },
+    ]
+  },
+  {
+    id: 'voz',
+    title: 'Interacción por voz e integración móvil',
+    desc: 'Modelos con capacidades de voz en tiempo real y optimizados para uso móvil.',
+    input: 'Voz en tiempo real, Texto',
+    output: 'Respuestas de voz hipernaturales',
+    tools: [
+      { name:'ChatGPT Voice', maker:'OpenAI', price:'Freemium (Integrado en Plus)', access:'private',
+        desc:'Conversación de voz en tiempo real con detección de emociones y tono. Integrado en la app móvil de ChatGPT.',
+        url:'https://chatgpt.com' },
+      { name:'Doubao', maker:'ByteDance', price:'Gratis (Ecosistema TikTok)', access:'open',
+        desc:'Asistente de voz de ByteDance (empresa detrás de TikTok). Muy popular en China por su integración con el ecosistema de la empresa.',
+        note:'Disponible principalmente en China. Integrado en el ecosistema de ByteDance/TikTok.',
+        url:'https://www.doubao.com' },
+    ]
+  },
+  {
+    id: 'video',
+    title: 'Generación de video',
+    desc: 'Modelos para generar video de alta calidad desde texto e imágenes.',
+    input: 'Texto, Imágenes base, Ajustes de cámara',
+    output: 'Video HD con simulación física',
+    tools: [
+      { name:'Runway Gen-3', maker:'Runway', price:'De pago', access:'paid',
+        desc:'El más usado en producción audiovisual profesional. Control fino sobre movimiento, cámara y estilo.',
+        url:'https://runwayml.com' },
+      { name:'Kling AI', maker:'Kuaishou', price:'Freemium (Créditos diarios gratis)', access:'private',
+        desc:'Alta calidad a menor costo que competidores occidentales. Muy bueno para movimientos realistas.',
+        note:'Empresa china (Kuaishou). Disponible globalmente con registro.',
+        url:'https://kling.ai' },
+      { name:'Seedream', maker:'ByteDance', price:'Freemium', access:'private',
+        desc:'Modelo de generación de video de ByteDance. Alta calidad en simulación física y movimientos naturales.',
+        note:'Accesible vía plataformas como Artlist. Verificar disponibilidad en tu región.',
+        url:'https://kling.ai' },
+    ]
+  },
+  {
+    id: 'imagen',
+    title: 'Generación de imágenes',
+    desc: 'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',
+    input: 'Texto (Prompts), Imágenes',
+    output: 'Imágenes de Alta Calidad y Concept Art',
+    tools: [
+      { name:'Midjourney', maker:'Midjourney Inc.', price:'De pago (Desde $10/mes)', access:'paid',
+        desc:'El estándar de calidad estética en generación de imagen. Muy usado en diseño, concept art y producción visual profesional.',
+        url:'https://www.midjourney.com' },
+      { name:'Baidu Wenxin Yige', maker:'Baidu', price:'Freemium (Sistema de créditos)', access:'private',
+        desc:'Herramienta de generación de imagen de Baidu con fuerte orientación a estilos asiáticos y arte tradicional chino.',
+        note:'Disponible principalmente en China. Puede requerir cuenta china y VPN fuera del país.',
+        url:'https://yige.baidu.com' },
+      { name:'Stable Diffusion', maker:'Stability AI', price:'Open source (Gratis)', access:'open',
+        desc:'Modelo texto-a-imagen open source. Base del ecosistema de imagen generativa. Requiere instalación local o acceso vía Hugging Face.',
+        url:'https://stability.ai' },
+      { name:'Flux', maker:'Black Forest Labs', price:'Open source (Gratis)', access:'open',
+        desc:'Nueva generación de modelos de imagen open source. Mayor coherencia semántica que SD. Estándar actual del ecosistema abierto.',
+        url:'https://blackforestlabs.ai' },
+      { name:'DALL-E 3', maker:'OpenAI', price:'Incluido en ChatGPT Plus', access:'private',
+        desc:'Integrado en ChatGPT. Muy bueno con instrucciones complejas y generación de texto dentro de imágenes.',
+        url:'https://openai.com/dall-e-3' },
+      { name:'Adobe Firefly', maker:'Adobe', price:'Incluido en Creative Cloud', access:'paid',
+        desc:'Integrado en Photoshop e Illustrator. Entrenado solo con imágenes con licencia. El más seguro para uso comercial.',
+        url:'https://firefly.adobe.com' },
+    ]
+  },
 ];
 
-const COLS = [
-  { id:'modelos',    label:'Modelos',               sub:'Motor de generación' },
-  { id:'opensource', label:'Interfaces open source', sub:'Control total, local o nube' },
-  { id:'saas',       label:'Apps privadas',          sub:'Listas para usar, suscripción' },
-  { id:'diseno',     label:'Integrado en diseño',    sub:'Plugins y funciones nativas' },
-];
+// ══════════════════════════════════
+// BUILD USE CASES
+// ══════════════════════════════════
+let mapBuilt = false;
 
-const TOOLS = [
-  {id:'sd',name:'Stable Diffusion',mod:['imagen'],col:'modelos',access:'open',desc:'Modelo texto-a-imagen publicado como código abierto en 2022. Base de la mayoría de las interfaces del ecosistema.',para:'Generación con control total. Variantes: SD 1.5, SDXL.',url:'https://stability.ai',related:['flux','a1111','comfyui','lora','colab','civitai','hf']},
-  {id:'flux',name:'Flux',mod:['imagen'],col:'modelos',access:'open',desc:'Nueva generación de Black Forest Labs. Mayor coherencia semántica y mejor seguimiento del prompt.',para:'Estándar actual del ecosistema open source. Variantes: Flux Dev, Flux Schnell.',url:'https://blackforestlabs.ai',related:['sd','a1111','comfyui','falai','hf']},
-  {id:'lora',name:'LoRA',mod:['imagen'],col:'modelos',access:'open',desc:'Archivos ligeros (50-200MB) que añaden estilos o conceptos al modelo base sin modificarlo. Combinables.',para:'Estilos artísticos, personajes, tipografías, estéticas consistentes.',url:'https://civitai.com',related:['sd','flux','a1111','comfyui','civitai']},
-  {id:'a1111',name:'Automatic 1111',mod:['imagen'],col:'opensource',access:'open',desc:'Interfaz gráfica local para Stable Diffusion y Flux. La más completa y con mayor comunidad.',para:'Control total sin escribir código. Soporta LoRAs, extensiones, inpaint.',url:'https://github.com/AUTOMATIC1111/stable-diffusion-webui',related:['sd','flux','lora','civitai']},
-  {id:'comfyui',name:'ComfyUI',mod:['imagen','video'],col:'opensource',access:'open',desc:'Interfaz basada en nodos para construir pipelines personalizados. Permite conectar APIs privadas.',para:'Workflows avanzados. Soporta Flux, SD, LTX Video, Wan.',url:'https://github.com/comfyanonymous/ComfyUI',related:['sd','flux','ltx','wan','replicate','falai']},
-  {id:'colab',name:'Google Colab',mod:['imagen','video','texto'],col:'opensource',access:'open',desc:'Entorno Python en la nube con GPUs gratuitas. Sin instalación local.',para:'Punto de entrada sin hardware propio.',url:'https://colab.research.google.com',related:['sd','flux','hf']},
-  {id:'hf',name:'Hugging Face',mod:['imagen','video','texto','sonido'],col:'opensource',access:'open',desc:'Referencia para modelos open source. Repositorio de modelos, datasets y Spaces.',para:'Acceso a los modelos más recientes.',url:'https://huggingface.co',related:['sd','flux','llama','mistral','ltx','wan','musicgen']},
-  {id:'civitai',name:'Civitai',mod:['imagen'],col:'opensource',access:'open',desc:'Portal de la comunidad para descargar modelos, LoRAs y embeddings.',para:'Encontrar modelos con ejemplos visuales.',url:'https://civitai.com',related:['sd','flux','a1111','lora']},
-  {id:'midj',name:'Midjourney',mod:['imagen'],col:'saas',access:'private',desc:'Generación vía Discord. Alta calidad estética. El más usado en producción visual profesional.',para:'Calidad visual sin configuración técnica. Requiere suscripción.',url:'https://midjourney.com',related:[]},
-  {id:'dalle',name:'DALL-E 3',mod:['imagen'],col:'saas',access:'private',desc:'Integrado en ChatGPT. Muy bueno con instrucciones complejas y texto dentro de imágenes.',para:'Generación rápida desde ChatGPT.',url:'https://openai.com/dall-e-3',related:['chatgpt']},
-  {id:'ideogram',name:'Ideogram',mod:['imagen'],col:'saas',access:'private',desc:'Especialmente bueno generando texto tipográfico dentro de imágenes.',para:'Diseño con texto integrado en la imagen.',url:'https://ideogram.ai',related:[]},
-  {id:'firefly',name:'Adobe Firefly',mod:['imagen'],col:'diseno',access:'design',desc:'Motor de IA generativa de Adobe. Entrenado con imágenes con licencia.',para:'Generative fill, inpaint, text to vector en suite Adobe.',url:'https://firefly.adobe.com',related:[]},
-  {id:'canva-ai',name:'Canva AI',mod:['imagen'],col:'diseno',access:'design',desc:'IA generativa integrada en Canva: generación de imágenes, edición con texto.',para:'Accesible para usuarios sin experiencia técnica.',url:'https://canva.com',related:[]},
-  {id:'figma-ai',name:'Figma AI',mod:['imagen'],col:'diseno',access:'design',desc:'Funciones de IA nativas en Figma: generación de imágenes, prototipado asistido.',para:'Integrado en el flujo de diseño UI/UX.',url:'https://figma.com',related:[]},
-  {id:'ltx',name:'LTX Video',mod:['video'],col:'modelos',access:'open',desc:'Uno de los primeros modelos de video open source de alta calidad. Uso eficiente de 16-bit.',para:'Video local sin depender de servicios en la nube.',url:'https://huggingface.co/Lightricks/LTX-Video',related:['comfyui','hf']},
-  {id:'wan',name:'Wan Video',mod:['video'],col:'modelos',access:'open',desc:'Alibaba. Alta calidad de movimiento y coherencia visual entre fotogramas.',para:'Generación de clips con movimientos fluidos.',url:'https://huggingface.co/Wan-AI',related:['comfyui','hf']},
-  {id:'cog',name:'CogVideoX',mod:['video'],col:'modelos',access:'open',desc:'Zhipu AI. Buena calidad en clips cortos. Accesible en hardware moderado.',para:'Generación de video open source accesible.',url:'https://huggingface.co/THUDM/CogVideoX-5b',related:['comfyui','hf']},
-  {id:'sora',name:'Sora',mod:['video'],col:'saas',access:'private',desc:'OpenAI. Video hasta 1 minuto desde texto o imagen.',para:'Video de alta definición de calidad profesional.',url:'https://openai.com/sora',related:[]},
-  {id:'runway',name:'Runway Gen-3',mod:['video'],col:'saas',access:'private',desc:'El más usado en producción audiovisual profesional.',para:'Producción de video con control creativo avanzado.',url:'https://runwayml.com',related:['premiere','aftereffects']},
-  {id:'kling',name:'Kling',mod:['video'],col:'saas',access:'private',desc:'Alta calidad a costo menor que Sora.',para:'Video con mejor relación costo/resultado.',url:'https://klingai.com',related:[]},
-  {id:'pika',name:'Pika Labs',mod:['video'],col:'saas',access:'private',desc:'Generación de clips cortos desde texto o imagen.',para:'Clips con efectos visuales. Free tier disponible.',url:'https://pika.art',related:[]},
-  {id:'premiere',name:'Premiere Pro',mod:['video'],col:'diseno',access:'design',desc:'Integra IA para transcripción automática, generative extend y eliminación de ruido.',para:'Speech to Text, Generative Extend, Enhance Speech.',url:'https://adobe.com/premiere',related:['runway','firefly']},
-  {id:'aftereffects',name:'After Effects',mod:['video'],col:'diseno',access:'design',desc:'Integra Firefly para generación de fondos. Rotobrush con IA.',para:'Rotobrush AI, generación de fondos con Firefly.',url:'https://adobe.com/after-effects',related:['firefly','runway']},
-  {id:'gpt4',name:'GPT-4o',mod:['texto','codigo'],col:'modelos',access:'private',desc:'El modelo de lenguaje más extendido de OpenAI. Multimodal.',para:'Base de ChatGPT.',url:'https://openai.com',related:['chatgpt','dalle']},
-  {id:'claudem',name:'Claude 3.5',mod:['texto','codigo'],col:'modelos',access:'private',desc:'Anthropic. Especialmente bueno en textos largos. 200.000 tokens de contexto.',para:'Análisis de documentos extensos, razonamiento complejo.',url:'https://anthropic.com',related:['claude-app']},
-  {id:'gemini-m',name:'Gemini 2.0',mod:['texto','codigo'],col:'modelos',access:'private',desc:'Google DeepMind. Integración nativa con el ecosistema Google.',para:'Flujos integrados con Drive, Docs, Gmail.',url:'https://deepmind.google/gemini',related:['gemini-app']},
-  {id:'llama',name:'Llama 3',mod:['texto','codigo'],col:'modelos',access:'open',desc:'Meta. El modelo open source más usado como base.',para:'Privacidad, uso local, sin costo por uso.',url:'https://llama.meta.com',related:['ollama','lmstudio','hf']},
-  {id:'mistral',name:'Mistral',mod:['texto','codigo'],col:'modelos',access:'open',desc:'Eficiente en hardware limitado. Muy bueno para uso local.',para:'Uso local con buena relación calidad/tamaño.',url:'https://mistral.ai',related:['ollama','lmstudio','hf']},
-  {id:'ollama',name:'Ollama',mod:['texto','codigo'],col:'opensource',access:'open',desc:'Herramienta de línea de comandos para correr LLMs localmente.',para:'Base para integraciones. Soporta Llama, Mistral, Qwen y más.',url:'https://ollama.com',related:['llama','mistral','lmstudio']},
-  {id:'lmstudio',name:'LM Studio',mod:['texto','codigo'],col:'opensource',access:'open',desc:'Interfaz gráfica para correr LLMs localmente. Sin terminal.',para:'La opción más accesible para correr LLMs localmente.',url:'https://lmstudio.ai',related:['llama','mistral','ollama']},
-  {id:'chatgpt',name:'ChatGPT',mod:['texto','codigo'],col:'saas',access:'private',desc:'OpenAI. El más extendido. Incluye DALL-E, ejecución de código y navegación web.',para:'Punto de entrada más accesible al ecosistema de IA.',url:'https://chat.openai.com',related:['dalle','gpt4']},
-  {id:'claude-app',name:'Claude',mod:['texto','codigo'],col:'saas',access:'private',desc:'Anthropic. Interfaz web y app móvil para Claude 3.5.',para:'Análisis de documentos, redacción, razonamiento complejo.',url:'https://claude.ai',related:['claudem']},
-  {id:'gemini-app',name:'Gemini',mod:['texto','codigo'],col:'saas',access:'private',desc:'Google. App web integrada con Drive, Docs y Gmail.',para:'Flujos de trabajo integrados en el ecosistema Google.',url:'https://gemini.google.com',related:['gemini-m']},
-  {id:'deepseek',name:'DeepSeek',mod:['texto','codigo'],col:'saas',access:'private',desc:'Modelo chino de alto rendimiento. Sorprendente relación calidad/costo.',para:'Alternativa de alto rendimiento a GPT-4 a menor costo.',url:'https://deepseek.com',related:[]},
-  {id:'notion-ai',name:'Notion AI',mod:['texto'],col:'diseno',access:'design',desc:'IA integrada en Notion para redacción, resumen y traducción.',para:'Escritura asistida dentro del flujo de trabajo en Notion.',url:'https://notion.so',related:[]},
-  {id:'cursor',name:'Cursor',mod:['codigo'],col:'saas',access:'private',desc:'Editor de código con IA integrada. Autocomplete y refactorización asistida.',para:'Programación asistida. Usa GPT-4 y Claude como motores.',url:'https://cursor.sh',related:['gpt4','claudem']},
-  {id:'github-copilot',name:'GitHub Copilot',mod:['codigo'],col:'diseno',access:'design',desc:'IA de GitHub integrada en VS Code.',para:'Asistente de programación integrado en el entorno de desarrollo.',url:'https://github.com/features/copilot',related:['gpt4']},
-  {id:'elevenlabs',name:'ElevenLabs',mod:['sonido'],col:'saas',access:'private',desc:'Síntesis y clonación de voz de alta calidad.',para:'Doblaje, narración, voces personalizadas.',url:'https://elevenlabs.io',related:[]},
-  {id:'suno',name:'Suno',mod:['sonido'],col:'saas',access:'private',desc:'Generación de canciones completas desde texto.',para:'Creación musical generativa sin conocimiento técnico.',url:'https://suno.com',related:['udio']},
-  {id:'udio',name:'Udio',mod:['sonido'],col:'saas',access:'private',desc:'Generación musical de alta calidad desde texto. Alternativa a Suno.',para:'Composición generativa, exploración de géneros.',url:'https://udio.com',related:['suno']},
-  {id:'musicgen',name:'MusicGen',mod:['sonido'],col:'modelos',access:'open',desc:'Meta. Modelo open source para generación de música desde texto.',para:'Generación musical open source.',url:'https://huggingface.co/facebook/musicgen-large',related:['hf']},
-  {id:'tripo3d',name:'Tripo3D',mod:['3d'],col:'saas',access:'private',desc:'Generación de modelos 3D desde texto o imagen.',para:'Crear assets 3D desde prompts o fotos.',url:'https://tripo3d.ai',related:[]},
-  {id:'meshy',name:'Meshy',mod:['3d'],col:'saas',access:'private',desc:'Texto o imagen a modelo 3D. Para game assets y diseño de producto.',para:'Assets 3D para juegos y arquitectura.',url:'https://meshy.ai',related:[]},
-  {id:'blender-ai',name:'Blender + IA',mod:['3d'],col:'opensource',access:'open',desc:'Blender con addons de IA: generación de texturas y denoising.',para:'Generación de texturas con SD directamente en Blender.',url:'https://blender.org',related:['sd']},
-  {id:'replicate',name:'Replicate',mod:['agentes'],col:'saas',access:'private',desc:'Repositorio de modelos accesibles por API.',para:'Usar cualquier modelo desde código o ComfyUI.',url:'https://replicate.com',related:['comfyui']},
-  {id:'falai',name:'fal.ai',mod:['agentes'],col:'saas',access:'private',desc:'Infraestructura de IA en la nube con nodos nativos para ComfyUI.',para:'Ejecutar modelos pesados sin hardware local.',url:'https://fal.ai',related:['comfyui','flux','sd']},
-  {id:'n8n',name:'n8n',mod:['agentes'],col:'opensource',access:'open',desc:'Plataforma de automatización open source. Conecta LLMs con cualquier servicio.',para:'Automatización con IA: conectar ChatGPT, Claude o cualquier API.',url:'https://n8n.io',related:['chatgpt','claude-app']},
-  {id:'make',name:'Make',mod:['agentes'],col:'saas',access:'private',desc:'Plataforma de automatización visual. Conecta IA con miles de apps sin código.',para:'Automatización no-code con IA integrada.',url:'https://make.com',related:[]},
-];
+function buildMap() {
+  mapBuilt = true;
 
-const TOOL_MAP = {};
-TOOLS.forEach(t => TOOL_MAP[t.id] = t);
+  const filtersEl = document.getElementById('uc-filters');
+  const sectionsEl = document.getElementById('uc-sections');
+
+  // All filter
+  const allBtn = document.createElement('button');
+  allBtn.className = 'usecase-filter active';
+  allBtn.textContent = 'Todos';
+  allBtn.onclick = () => {
+    document.querySelectorAll('.usecase-filter').forEach(b => b.classList.remove('active'));
+    allBtn.classList.add('active');
+    document.querySelectorAll('.usecase-section').forEach(s => s.classList.remove('hidden'));
+  };
+  filtersEl.appendChild(allBtn);
+
+  USE_CASES.forEach(uc => {
+    // Filter button
+    const btn = document.createElement('button');
+    btn.className = 'usecase-filter';
+    btn.textContent = uc.title.split(' ').slice(0,2).join(' ');
+    btn.onclick = () => {
+      document.querySelectorAll('.usecase-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.usecase-section').forEach(s => {
+        s.classList.toggle('hidden', s.dataset.id !== uc.id);
+      });
+    };
+    filtersEl.appendChild(btn);
+
+    // Section
+    const sec = document.createElement('div');
+    sec.className = 'usecase-section reveal';
+    sec.dataset.id = uc.id;
+
+    sec.innerHTML = `
+      <div class="usecase-header">
+        <div class="usecase-title">${uc.title}</div>
+      </div>
+      <div class="usecase-desc">${uc.desc}</div>
+      <div class="usecase-io">
+        <div class="usecase-io-item"><span class="usecase-io-label">INPUT</span> ${uc.input}</div>
+        <div class="usecase-io-item"><span class="usecase-io-label">OUTPUT</span> ${uc.output}</div>
+      </div>
+      <div class="tools-cards" id="cards-${uc.id}"></div>
+    `;
+
+    sectionsEl.appendChild(sec);
+
+    // Tool cards
+    const cardsEl = sec.querySelector(`#cards-${uc.id}`);
+    uc.tools.forEach(tool => {
+      const dotColor = tool.access === 'open' ? 'var(--open)' : tool.access === 'paid' ? 'var(--design)' : 'var(--private)';
+      const card = document.createElement('div');
+      card.className = 'tool-card';
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px">
+          <div style="width:6px;height:6px;border-radius:50%;background:${dotColor};flex-shrink:0"></div>
+          <div class="tc-name">${tool.name}</div>
+        </div>
+        <div class="tc-maker">${tool.maker}</div>
+        <div class="tc-price">${tool.price}</div>
+        <div class="tc-desc">${tool.desc}</div>
+        ${tool.note ? `<div class="tc-note">⚠ ${tool.note}</div>` : ''}
+        ${tool.url ? `<a class="tc-link" href="${tool.url}" target="_blank">↗ Ver sitio</a>` : ''}
+      `;
+      cardsEl.appendChild(card);
+    });
+  });
+
+  setTimeout(observeReveals, 50);
+}
 
 // ══════════════════════════════════
 // DATA: TIMELINE
@@ -1066,37 +1330,4 @@ function buildGlosario() {
       <div class="g-num">${String(i+1).padStart(2,'0')}</div>
       <div class="g-term">${item.term}</div>
       <div class="g-short">${item.short}</div>
-      <div class="g-full">${item.full}</div>
-      <span class="g-toggle">+ ver más</span>`;
-    el.onclick = () => {
-      el.classList.toggle('expanded');
-      el.querySelector('.g-toggle').textContent = el.classList.contains('expanded') ? '− cerrar' : '+ ver más';
-    };
-    list.insertBefore(el, noRes);
-  });
-  updateGCount(sorted.length);
-  setTimeout(observeReveals, 50);
-}
-
-function filterGlosario() {
-  const q = document.getElementById('g-search').value.toLowerCase().trim();
-  let visible = 0;
-  document.querySelectorAll('.glos-item').forEach(el => {
-    const match = !q || el.dataset.term.includes(q);
-    el.classList.toggle('g-hidden', !match);
-    if (match) visible++;
-  });
-  document.getElementById('g-no-results').style.display = visible === 0 ? 'block' : 'none';
-  updateGCount(visible);
-}
-
-function updateGCount(n) {
-  document.getElementById('g-count').textContent = `${n} / ${GLOSSARY.length} términos`;
-}
-
-// INIT
-loadAndBuildMap();
-setTimeout(observeReveals, 100);
-</script>
-</body>
-</html>
+      <div class=
