@@ -858,11 +858,10 @@ async function loadAndBuildMap() {
   const grid = document.getElementById('map-grid');
   grid.innerHTML = '<div style="padding:40px;font-family:var(--font-mono);font-size:11px;color:var(--cyber);letter-spacing:.15em;text-transform:uppercase;">Cargando herramientas...</div>';
   const rows = await fetchSheet('herramientas');
-  if (rows) {
+  if (rows && rows.length) {
+    TOOLS.length = 0;
     rows.forEach(r => {
-      const existing = TOOLS.find(t => t.id === r.id);
-      if (existing) { Object.assign(existing, {name:r.name,desc:r.desc,para:r.para,url:r.url,related:(r.related||'').split('|').filter(Boolean)}); }
-      else TOOLS.push({id:r.id,name:r.name,mod:(r.mod||'').split('|').filter(Boolean),col:r.col,access:r.access||'private',desc:r.desc,para:r.para,url:r.url,related:(r.related||'').split('|').filter(Boolean)});
+      if (r.id) TOOLS.push({id:r.id,name:r.name,mod:(r.mod||'').split('|').filter(Boolean),col:r.col,access:r.access||'private',desc:r.desc||'',para:r.para||'',url:r.url||'',related:(r.related||'').split('|').filter(Boolean)});
     });
     TOOLS.forEach(t => TOOL_MAP[t.id] = t);
   }
@@ -967,13 +966,11 @@ let activeTLCat = new Set(['tecnico','cultural','critico']);
 async function loadAndBuildHistory() {
   historyBuilt = true;
   const rows = await fetchSheet('historia');
-  if (rows) {
+  if (rows && rows.length) {
+    TIMELINE.length = 0;
     rows.forEach(r => {
-      const existing = TIMELINE.find(t => t.year == r.year && t.title === r.title);
-      if (!existing && r.year && r.title) {
-        TIMELINE.push({year:r.year,title:r.title,cat:r.cat||'tecnico',short:r.short||'',full:r.full||'',
-          person: r.person_name ? {name:r.person_name,bio:r.person_bio||''} : null});
-      }
+      if (r.year && r.title) TIMELINE.push({year:r.year,title:r.title,cat:r.cat||'tecnico',short:r.short||'',full:r.full||'',
+        person: r.person_name ? {name:r.person_name,bio:r.person_bio||''} : null});
     });
   }
   buildHistory();
@@ -1048,14 +1045,10 @@ let glosarioBuilt = false;
 async function loadAndBuildGlosario() {
   glosarioBuilt = true;
   const rows = await fetchSheet('glosario');
-  if (rows) {
+  if (rows && rows.length) {
+    GLOSSARY.length = 0;
     rows.forEach(r => {
-      if (!GLOSSARY.find(g => g.term === r.term) && r.term) {
-        GLOSSARY.push({term:r.term,short:r.short||'',full:r.full||''});
-      } else if (r.term) {
-        const g = GLOSSARY.find(g => g.term === r.term);
-        if (g) { g.short = r.short||g.short; g.full = r.full||g.full; }
-      }
+      if (r.term) GLOSSARY.push({term:r.term, short:r.short||'', full:r.full||''});
     });
   }
   buildGlosario();
