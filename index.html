@@ -696,20 +696,20 @@ nav::after  { right: 0; border-width: 0 1px 1px 0; }
 <!-- ══ HERRAMIENTAS ══ -->
 <div id="herramientas" class="page active">
   <div class="hero">
-    <h1 class="hero-title reveal">Ecosistema<br><em>actual</em></h1>
-    <p class="hero-sub reveal">Herramientas organizadas por caso de uso. Clic en cada herramienta para ver más información.</p>
-    <div class="hero-meta reveal">
+    <h1 class="hero-title">Ecosistema<br><em>actual</em></h1>
+    <p class="hero-sub">Herramientas organizadas por caso de uso. Clic en cada herramienta para ver más información.</p>
+    <div class="hero-meta">
       <div class="hero-meta-item">Scroll para explorar</div>
     </div>
   </div>
 
   <div class="usecase-wrap">
-    <div class="uc-legend reveal">
+    <div class="uc-legend">
       <div class="uc-legend-item"><div class="uc-legend-dot" style="background:var(--open)"></div>Open source / Gratuito</div>
       <div class="uc-legend-item"><div class="uc-legend-dot" style="background:var(--private)"></div>Privado / Freemium</div>
       <div class="uc-legend-item"><div class="uc-legend-dot" style="background:var(--design)"></div>De pago</div>
     </div>
-    <div class="usecase-filters reveal" id="uc-filters"></div>
+    <div class="usecase-filters" id="uc-filters"></div>
     <div id="uc-sections"></div>
   </div>
 </div>
@@ -717,15 +717,15 @@ nav::after  { right: 0; border-width: 0 1px 1px 0; }
 <!-- ══ HISTORIA ══ -->
 <div id="historia" class="page">
   <div class="hero">
-    <h1 class="hero-title reveal">Línea de<br><em>tiempo</em></h1>
-    <p class="hero-sub reveal">Hitos técnicos y culturales que llevaron a la IA generativa actual. Clic para expandir.</p>
-    <div class="hero-meta reveal"><div class="hero-meta-item">Scroll para explorar</div></div>
+    <h1 class="hero-title">Línea de<br><em>tiempo</em></h1>
+    <p class="hero-sub">Hitos técnicos y culturales que llevaron a la IA generativa actual. Clic para expandir.</p>
+    <div class="hero-meta"><div class="hero-meta-item">Scroll para explorar</div></div>
   </div>
   <div class="tl-section">
-    <div class="section-header reveal">
+    <div class="section-header">
       <div class="section-title">Historia</div>
     </div>
-    <div class="tl-filters reveal" id="tl-filters"></div>
+    <div class="tl-filters" id="tl-filters"></div>
     <div id="tl-entries"></div>
   </div>
 </div>
@@ -733,15 +733,15 @@ nav::after  { right: 0; border-width: 0 1px 1px 0; }
 <!-- ══ GLOSARIO ══ -->
 <div id="glosario" class="page">
   <div class="hero">
-    <h1 class="hero-title reveal">Términos<br><em>clave</em></h1>
-    <p class="hero-sub reveal">Definiciones del ecosistema. Buscá o hacé clic en cada término para expandir.</p>
-    <div class="hero-meta reveal"><div class="hero-meta-item">Scroll para explorar</div></div>
+    <h1 class="hero-title">Términos<br><em>clave</em></h1>
+    <p class="hero-sub">Definiciones del ecosistema. Buscá o hacé clic en cada término para expandir.</p>
+    <div class="hero-meta"><div class="hero-meta-item">Scroll para explorar</div></div>
   </div>
   <div class="glos-section">
-    <div class="section-header reveal">
+    <div class="section-header">
       <div class="section-title">Glosario</div>
     </div>
-    <div class="glos-search-row reveal">
+    <div class="glos-search-row">
       <input class="glos-search" type="text" placeholder="Buscar término..." id="g-search" oninput="filterGlosario()">
       <div class="glos-count" id="g-count"></div>
     </div>
@@ -1264,4 +1264,6 @@ function buildGlosario() {
   const noRes = document.getElementById('g-no-results');
   const sorted = [...GLOSSARY].sort((a,b) => a.term.localeCompare(b.term));
   sorted.forEach((item, i) => {
-    const el = docum
+    const el = document.createElement('div');
+    el.className = 'glos-item reveal';
+    el.dataset.term = (item.term+' '+ite
