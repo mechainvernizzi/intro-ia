@@ -130,10 +130,16 @@ nav {
 .uc-wrap { padding-bottom: 80px; }
 
 .uc-bar {
-  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
-  padding: 20px 48px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 0;
+  border-bottom: 1px solid var(--border);
   background: var(--surface);
 }
+.uc-bar-row {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  padding: 10px 48px;
+}
+.uc-bar-row:first-child { padding-top: 16px; }
+.uc-bar-row:last-of-type { padding-bottom: 16px; }
 .uc-btn {
   font-family: var(--mono); font-size: 11px;
   letter-spacing: .1em; text-transform: uppercase;
@@ -158,6 +164,36 @@ nav {
 
 .uc-section { border-bottom: 1px solid var(--border); padding: 56px 48px 0; }
 .uc-section.hidden { display: none; }
+.card.access-hidden { display: none; }
+.uc-bar-sep { width: 1px; background: var(--border); margin: 0 8px; align-self: stretch; }
+.uc-bar-group {
+  padding: 12px 48px 4px;
+  display: flex; align-items: center; gap: 10px;
+}
+.uc-bar-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--green);
+  border-left: 2px solid var(--green); padding-left: 8px;
+  white-space: nowrap;
+}
+.uc-btn-access {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; padding: 8px 16px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--ink-mid); cursor: pointer; transition: all .18s; white-space: nowrap;
+}
+.uc-btn-access:hover { background: var(--paper-dark); }
+.uc-btn-access.on { background: var(--paper-dark); border-color: var(--ink-dim); color: var(--ink); font-weight: 700; }
+.uc-access-bar {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  padding: 14px 48px; border-bottom: 1px solid var(--border);
+  background: var(--paper-dark);
+}
+.card-badge {
+  display: inline-block; font-family: var(--mono); font-size: 10px;
+  letter-spacing: .08em; padding: 2px 8px; border: 1px solid;
+  text-transform: uppercase;
+}
 
 .uc-head { margin-bottom: 8px; }
 .uc-title {
@@ -170,12 +206,10 @@ nav {
   padding-left: 16px; border-left: 2px solid var(--green);
 }
 .uc-io {
-  display: flex; gap: 28px; flex-wrap: wrap;
-  margin-bottom: 32px;
-  font-family: var(--mono); font-size: 11px;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim);
+  display: flex; gap: 20px; flex-wrap: wrap;
+  margin-bottom: 28px; align-items: baseline;
 }
-.uc-io span { color: var(--green); font-weight: 700; margin-right: 8px; }
+.uc-io span { color: var(--green); }
 
 .cards {
   display: grid;
@@ -208,6 +242,14 @@ nav {
   margin-bottom: 12px; text-transform: uppercase;
 }
 .card-desc { font-size: 14px; color: var(--ink-mid); line-height: 1.65; }
+.card-row-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.access-badge { font-size: 10px; padding: 2px 8px; border: 1px solid; text-transform: uppercase; font-family: var(--mono); letter-spacing: .08em; }
+.price-badge { font-size: 11px; padding: 2px 8px; border: 0.5px solid var(--border); color: var(--ink-mid); font-family: var(--mono); }
+.modal-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.modal-badge { font-size: 10px; padding: 2px 8px; border: 1px solid; border-radius: 20px; font-family: var(--mono); letter-spacing: .06em; }
+.io-item { display: flex; align-items: baseline; gap: 8px; }
+.io-label { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--green); letter-spacing: .1em; flex-shrink: 0; }
+.io-val { font-size: 13px; color: var(--ink-mid); }
 .card-note {
   font-size: 12px; color: var(--ink-dim); line-height: 1.5;
   padding: 8px 10px; background: var(--green-dim);
@@ -372,678 +414,657 @@ nav {
   <div style="padding: 80px 48px 32px; border-bottom: 1px solid var(--border);">
     <div style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:12px;">Mapa de herramientas</div>
     <h1 style="font-family:var(--serif);font-size:clamp(40px,6vw,80px);font-weight:700;line-height:.95;color:var(--ink);letter-spacing:-.02em;margin-bottom:20px;">Ecosistema <em style="font-style:italic;color:var(--ink-mid);">actual</em></h1>
-    <p style="font-size:15px;color:var(--ink-mid);max-width:480px;line-height:1.7;padding-left:16px;border-left:2px solid var(--green);">Herramientas organizadas por caso de uso. Filtrá por categoría para explorar.</p>
+    <p style="font-size:15px;color:var(--ink-mid);max-width:480px;line-height:1.7;padding-left:16px;border-left:2px solid var(--green);">Herramientas organizadas por caso de uso y modo de acceso. Filtrá por cualquiera de los dos ejes.</p>
   </div>
   <div class="uc-wrap">
-    <div class="uc-legend">
-      <div class="uc-leg"><div class="uc-dot" style="background:var(--green)"></div>Open source / Gratuito</div>
-      <div class="uc-leg"><div class="uc-dot" style="background:var(--blue)"></div>Privado / Freemium</div>
-      <div class="uc-leg"><div class="uc-dot" style="background:var(--orange)"></div>De pago</div>
-    </div>
-    <div class="uc-bar" id="uc-bar"><button class="uc-btn on" onclick="filterAll()">Todos</button>
-<button class="uc-btn" onclick="filterSection('productividad')">Productividad y asistencia general</button>
-<button class="uc-btn" onclick="filterSection('multimodalidad')">Multimodalidad y ecosistema de datos</button>
-<button class="uc-btn" onclick="filterSection('razonamiento')">Razonamiento complejo y lógica</button>
-<button class="uc-btn" onclick="filterSection('busqueda')">Búsqueda e investigación con fuentes</button>
-<button class="uc-btn" onclick="filterSection('documentos')">Análisis de documentos de gran extensión</button>
-<button class="uc-btn" onclick="filterSection('voz')">Interacción por voz e integración móvil</button>
-<button class="uc-btn" onclick="filterSection('video')">Generación de video</button>
-<button class="uc-btn" onclick="filterSection('imagen')">Generación de imágenes</button>
+
+    <div class="uc-bar" id="uc-bar">
+<div class="uc-bar-row"><button class="uc-btn on" onclick="filterUC('all',this)">Todos</button></div>
+<div class="uc-bar-group"><div class="uc-bar-label">Texto y IA general</div></div>
+<div class="uc-bar-row">
+  <button class="uc-btn" onclick="filterUC('productividad',this)">Productividad y asistencia general</button>
+  <button class="uc-btn" onclick="filterUC('multimodalidad',this)">Multimodalidad y Ecosistema de Datos</button>
+  <button class="uc-btn" onclick="filterUC('razonamiento',this)">Razonamiento Complejo y Lógica</button>
+  <button class="uc-btn" onclick="filterUC('busqueda',this)">Búsqueda e Investigación con Fuentes</button>
+  <button class="uc-btn" onclick="filterUC('documentos',this)">Análisis de Documentos de Gran Extensión</button>
+  <button class="uc-btn" onclick="filterUC('voz_integracion',this)">Interacción por voz e Integración móvil</button>
+</div>
+<div class="uc-bar-group"><div class="uc-bar-label">Diseño</div></div>
+<div class="uc-bar-row">
+  <button class="uc-btn" onclick="filterUC('diseno_ui',this)">Diseño UI/UX y Prototipado</button>
+  <button class="uc-btn" onclick="filterUC('diseno_grafico',this)">Diseño Gráfico, Ilustración y Retoque</button>
+  <button class="uc-btn" onclick="filterUC('diseno_contenido',this)">Diseño de Contenido, Marketing y Branding</button>
+  <button class="uc-btn" onclick="filterUC('diseno_web',this)">Diseño Web (Estructura y UX)</button>
+  <button class="uc-btn" onclick="filterUC('branding',this)">Branding e Identidad Visual</button>
+  <button class="uc-btn" onclick="filterUC('postproduccion',this)">Postproducción, Arte Digital, Retoque</button>
+  <button class="uc-btn" onclick="filterUC('prototipado_rapido',this)">Prototipado Rápido para no-diseñadores</button>
+  <button class="uc-btn" onclick="filterUC('diseno_producto',this)">Diseño de Producto e Industrial</button>
+</div>
+<div class="uc-bar-group"><div class="uc-bar-label">Generación</div></div>
+<div class="uc-bar-row">
+  <button class="uc-btn" onclick="filterUC('imagen',this)">Imagen</button>
+  <button class="uc-btn" onclick="filterUC('video',this)">Video</button>
+  <button class="uc-btn" onclick="filterUC('audio',this)">Audio y voz</button>
+</div>
+<div class="uc-bar-group"><div class="uc-bar-label">Desarrollo</div></div>
+<div class="uc-bar-row">
+  <button class="uc-btn" onclick="filterUC('codigo',this)">Código</button>
+  <button class="uc-btn" onclick="filterUC('agentes',this)">Agentes y MCP</button>
+</div>
+
+</div>
+<div class="uc-access-bar">
+<button class="uc-btn-access on" onclick="filterAccess('all', this)">Todos los accesos</button>
+<button class="uc-btn-access" style="border-color:#0099ff;color:#0066cc" onclick="filterAccess('privada', this)">● Privada</button>
+<button class="uc-btn-access" style="border-color:#00c48c;color:#00875a" onclick="filterAccess('opensource', this)">● Open source</button>
+<button class="uc-btn-access" style="border-color:#f97316;color:#c05200" onclick="filterAccess('integrada', this)">● Integrada</button>
+<button class="uc-btn-access" style="border-color:#9b59b6;color:#6c3483" onclick="filterAccess('mcp', this)">● MCP/API</button>
 </div>
     <div id="uc-sections"><div class="uc-section" data-id="productividad">
   <div class="uc-title">Productividad y asistencia general</div>
   <div class="uc-desc">Modelos de uso cotidiano para escritura, resumen, brainstorming y asistencia en tareas diversas.</div>
   <div class="uc-io">
-    <div><span>INPUT</span>Texto, Voz, Imágenes, Archivos</div>
-    <div><span>OUTPUT</span>Texto, Código, Imágenes, Voz</div>
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Voz, Imágenes, Archivos</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Texto, Código, Imágenes, Voz</span></div>
   </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">ChatGPT</div>
   </div>
   <div class="card-maker">OpenAI</div>
-  <div class="card-price">Freemium ($20/mes)</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium ($20/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span><span class="modal-badge" style="background:#e67e2218;color:#e67e22;border-color:#e67e2244">audio</span><span class="modal-badge" style="background:#00a87818;color:#00a878;border-color:#00a87844">código</span></div>
   <div class="card-desc">El modelo más extendido. Incluye generación de imágenes, ejecución de código, navegación web y GPTs personalizados.</div>
-  
   <a class="card-link" href="https://chatgpt.com" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">Ernie Bot</div>
   </div>
   <div class="card-maker">Baidu</div>
-  <div class="card-price">Freemium (Planes corporativos)</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Planes corporativos)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
   <div class="card-desc">Principal asistente de IA de Baidu. Profunda integración con el ecosistema chino.</div>
-  <div class="card-note">⚠ Disponible principalmente en China. Puede requerir VPN fuera del país.</div>
-  <a class="card-link" href="https://yiyan.baidu.com/" target="_blank">↗ Ver sitio</a>
+  <div class="card-note">⚠ Disponible principalmente en China. Puede requerir VPN.</div><a class="card-link" href="https://yiyan.baidu.com/" target="_blank">↗ Ver sitio</a>
 </div></div>
 </div>
 <div class="uc-section" data-id="multimodalidad">
-  <div class="uc-title">Multimodalidad y ecosistema de datos</div>
+  <div class="uc-title">Multimodalidad y Ecosistema de Datos</div>
   <div class="uc-desc">Modelos que procesan y combinan múltiples tipos de input: texto, imágenes, audio, video y código.</div>
   <div class="uc-io">
-    <div><span>INPUT</span>Texto, Imágenes, Audio, Video, Código</div>
-    <div><span>OUTPUT</span>Texto, Código, Imágenes, Audio</div>
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Imágenes, Audio, Video, Código</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Texto, Código, Imágenes, Audio</span></div>
   </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">Gemini</div>
   </div>
   <div class="card-maker">Google</div>
-  <div class="card-price">Freemium ($20/mes)</div>
-  <div class="card-desc">Integrado con Drive, Docs y Gmail. Acceso a información en tiempo real. Multimodal nativo.</div>
-  
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium ($20/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span><span class="modal-badge" style="background:#e67e2218;color:#e67e22;border-color:#e67e2244">audio</span><span class="modal-badge" style="background:#e74c3c18;color:#e74c3c;border-color:#e74c3c44">video</span><span class="modal-badge" style="background:#00a87818;color:#00a878;border-color:#00a87844">código</span></div>
+  <div class="card-desc">Integrado con Drive, Docs y Gmail. Acceso a información en tiempo real.</div>
   <a class="card-link" href="https://gemini.google.com" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+</div><div class="card" data-access="opensource">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00a878;flex-shrink:0"></div>
     <div class="card-name">Qwen / Tongyi</div>
   </div>
   <div class="card-maker">Alibaba</div>
-  <div class="card-price">Freemium (Opciones Open source)</div>
-  <div class="card-desc">Modelo multimodal con versiones open source. Muy bueno en código y razonamiento matemático.</div>
-  <div class="card-note">⚠ Versiones open source descargables en Hugging Face.</div>
-  <a class="card-link" href="https://qwenlm.github.io" target="_blank">↗ Ver sitio</a>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#00a878;color:#00a878">Open source</span>
+    <span class="price-badge">Freemium (Open source)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span><span class="modal-badge" style="background:#e67e2218;color:#e67e22;border-color:#e67e2244">audio</span><span class="modal-badge" style="background:#00a87818;color:#00a878;border-color:#00a87844">código</span></div>
+  <div class="card-desc">Modelo multimodal con versiones open source. Muy bueno en código y razonamiento.</div>
+  <div class="card-note">⚠ Versiones open source en Hugging Face.</div><a class="card-link" href="https://qwenlm.github.io" target="_blank">↗ Ver sitio</a>
 </div></div>
 </div>
 <div class="uc-section" data-id="razonamiento">
-  <div class="uc-title">Razonamiento complejo y lógica</div>
-  <div class="uc-desc">Modelos especializados en tareas que requieren razonamiento profundo, análisis y precisión.</div>
+  <div class="uc-title">Razonamiento Complejo y Lógica</div>
+  <div class="uc-desc">Modelos especializados en análisis profundo, razonamiento y precisión.</div>
   <div class="uc-io">
-    <div><span>INPUT</span>Texto, Código, Archivos masivos</div>
-    <div><span>OUTPUT</span>Texto, Código de alta precisión, Lógica</div>
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Código, Archivos masivos</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Texto, Código de alta precisión</span></div>
   </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">Claude</div>
   </div>
   <div class="card-maker">Anthropic</div>
-  <div class="card-price">Freemium ($20/mes)</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium ($20/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span><span class="modal-badge" style="background:#00a87818;color:#00a878;border-color:#00a87844">código</span></div>
   <div class="card-desc">Especialmente bueno en textos largos y razonamiento. 200.000 tokens de contexto.</div>
-  
   <a class="card-link" href="https://claude.ai" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+</div><div class="card" data-access="opensource">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00a878;flex-shrink:0"></div>
     <div class="card-name">DeepSeek</div>
   </div>
   <div class="card-maker">DeepSeek</div>
-  <div class="card-price">Freemium (API económica)</div>
-  <div class="card-desc">Modelo chino de alto rendimiento. Sorprendente relación calidad/costo. Versiones open source disponibles.</div>
-  <div class="card-note">⚠ Empresa china. Disponible globalmente.</div>
-  <a class="card-link" href="https://www.deepseek.com" target="_blank">↗ Ver sitio</a>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#00a878;color:#00a878">Open source</span>
+    <span class="price-badge">Freemium (API económica)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#00a87818;color:#00a878;border-color:#00a87844">código</span></div>
+  <div class="card-desc">Modelo de alto rendimiento. Sorprendente relación calidad/costo. Versiones open source disponibles.</div>
+  <div class="card-note">⚠ Empresa china. Disponible globalmente.</div><a class="card-link" href="https://www.deepseek.com" target="_blank">↗ Ver sitio</a>
 </div></div>
 </div>
 <div class="uc-section" data-id="busqueda">
-  <div class="uc-title">Búsqueda e investigación con fuentes</div>
-  <div class="uc-desc">Modelos orientados a la búsqueda verificada con citas y fuentes.</div>
+  <div class="uc-title">Búsqueda e Investigación con Fuentes</div>
+  <div class="uc-desc">Modelos orientados a búsqueda verificada con citas y fuentes.</div>
   <div class="uc-io">
-    <div><span>INPUT</span>Texto, Enlaces, Documentos</div>
-    <div><span>OUTPUT</span>Texto estructurado con citas de fuentes</div>
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Enlaces, Documentos</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Texto estructurado con citas de fuentes</span></div>
   </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">Perplexity AI</div>
   </div>
   <div class="card-maker">Perplexity</div>
-  <div class="card-price">Freemium ($20/mes)</div>
-  <div class="card-desc">Motor de búsqueda con IA. Responde con fuentes verificables y citadas. Ideal para investigación.</div>
-  
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium ($20/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span></div>
+  <div class="card-desc">Motor de búsqueda con IA. Responde con fuentes verificables y citadas.</div>
   <a class="card-link" href="https://www.perplexity.ai" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
-    <div class="card-name">Tencent Yuanbao</div>
-  </div>
-  <div class="card-maker">Tencent</div>
-  <div class="card-price">Gratis (Ecosistema WeChat)</div>
-  <div class="card-desc">Asistente IA de Tencent integrado en el ecosistema WeChat.</div>
-  <div class="card-note">⚠ Disponible principalmente en China.</div>
-  <a class="card-link" href="https://hunyuan.tencent.com" target="_blank">↗ Ver sitio</a>
-</div></div>
-</div>
-<div class="uc-section" data-id="documentos">
-  <div class="uc-title">Análisis de documentos de gran extensión</div>
-  <div class="uc-desc">Herramientas para procesar y analizar documentos masivos, PDFs y fuentes múltiples.</div>
-  <div class="uc-io">
-    <div><span>INPUT</span>Documentos masivos, PDFs, Enlaces</div>
-    <div><span>OUTPUT</span>Resúmenes, Respuestas analíticas, Audio</div>
-  </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+</div><div class="card" data-access="opensource">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00a878;flex-shrink:0"></div>
     <div class="card-name">NotebookLM</div>
   </div>
   <div class="card-maker">Google</div>
-  <div class="card-price">Gratis</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#00a878;color:#00a878">Open source</span>
+    <span class="price-badge">Gratis</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#e67e2218;color:#e67e22;border-color:#e67e2244">audio</span></div>
   <div class="card-desc">Cargá documentos propios y hacé preguntas sobre ellos. Genera resúmenes en audio.</div>
-  
   <a class="card-link" href="https://notebooklm.google" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+</div></div>
+</div>
+<div class="uc-section" data-id="documentos">
+  <div class="uc-title">Análisis de Documentos de Gran Extensión</div>
+  <div class="uc-desc">Herramientas para procesar y analizar documentos masivos, PDFs y fuentes múltiples.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Documentos masivos, PDFs, Enlaces</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Resúmenes, Respuestas analíticas</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">Kimi</div>
   </div>
   <div class="card-maker">Moonshot AI</div>
-  <div class="card-price">Freemium (Gran ventana gratuita)</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Gran ventana gratuita)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span></div>
   <div class="card-desc">Ventana de contexto muy grande de manera gratuita. Especializado en análisis de documentos extensos.</div>
-  <div class="card-note">⚠ Empresa china con presencia internacional.</div>
-  <a class="card-link" href="https://www.kimi.com" target="_blank">↗ Ver sitio</a>
+  <div class="card-note">⚠ Empresa china con presencia internacional.</div><a class="card-link" href="https://www.kimi.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Claude</div>
+  </div>
+  <div class="card-maker">Anthropic</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium ($20/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span><span class="modal-badge" style="background:#00a87818;color:#00a878;border-color:#00a87844">código</span></div>
+  <div class="card-desc">200.000 tokens de contexto. Ideal para analizar documentos extensos y múltiples fuentes.</div>
+  <a class="card-link" href="https://claude.ai" target="_blank">↗ Ver sitio</a>
 </div></div>
 </div>
-<div class="uc-section" data-id="voz">
-  <div class="uc-title">Interacción por voz e integración móvil</div>
+<div class="uc-section" data-id="voz_integracion">
+  <div class="uc-title">Interacción por voz e Integración móvil</div>
   <div class="uc-desc">Modelos con capacidades de voz en tiempo real y optimizados para uso móvil.</div>
   <div class="uc-io">
-    <div><span>INPUT</span>Voz en tiempo real, Texto</div>
-    <div><span>OUTPUT</span>Respuestas de voz hipernaturales</div>
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Voz en tiempo real, Texto</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Respuestas de voz hipernaturales</span></div>
   </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">ChatGPT Voice</div>
   </div>
   <div class="card-maker">OpenAI</div>
-  <div class="card-price">Freemium (Integrado en Plus)</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Integrado en Plus)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#e67e2218;color:#e67e22;border-color:#e67e2244">audio</span></div>
   <div class="card-desc">Conversación de voz en tiempo real con detección de emociones y tono.</div>
-  
   <a class="card-link" href="https://chatgpt.com" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">Doubao</div>
   </div>
   <div class="card-maker">ByteDance</div>
-  <div class="card-price">Gratis (Ecosistema TikTok)</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Gratis (Ecosistema TikTok)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#e67e2218;color:#e67e22;border-color:#e67e2244">audio</span></div>
   <div class="card-desc">Asistente de voz de ByteDance. Muy popular en China.</div>
-  <div class="card-note">⚠ Disponible principalmente en China.</div>
-  <a class="card-link" href="https://www.doubao.com" target="_blank">↗ Ver sitio</a>
+  <div class="card-note">⚠ Disponible principalmente en China.</div><a class="card-link" href="https://www.doubao.com" target="_blank">↗ Ver sitio</a>
 </div></div>
 </div>
-<div class="uc-section" data-id="video">
-  <div class="uc-title">Generación de video</div>
-  <div class="uc-desc">Modelos para generar video de alta calidad desde texto e imágenes.</div>
+<div class="uc-section" data-id="diseno_ui">
+  <div class="uc-title">Diseño UI/UX y Prototipado</div>
+  <div class="uc-desc">Herramientas para diseño de interfaces, prototipado y wireframing con IA.</div>
   <div class="uc-io">
-    <div><span>INPUT</span>Texto, Imágenes base, Ajustes de cámara</div>
-    <div><span>OUTPUT</span>Video HD con simulación física</div>
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Bocetos, Capturas de pantalla</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Diseños UI, Prototipos, Wireframes</span></div>
   </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="cards"><div class="card" data-access="integrada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
-    <div class="card-name">Runway Gen-3</div>
+    <div class="card-name">Figma AI</div>
   </div>
-  <div class="card-maker">Runway</div>
-  <div class="card-price">De pago</div>
-  <div class="card-desc">El más usado en producción audiovisual profesional. Control fino sobre movimiento y estilo.</div>
-  
-  <a class="card-link" href="https://runwayml.com" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="card-maker">Figma</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#f97316;color:#f97316">Integrada</span>
+    <span class="price-badge">Freemium (incluido en planes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Funciones de IA nativas: generación de imágenes, renombrado de capas, prototipado asistido.</div>
+  <a class="card-link" href="https://figma.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
-    <div class="card-name">Kling AI</div>
+    <div class="card-name">Uizard</div>
   </div>
-  <div class="card-maker">Kuaishou</div>
-  <div class="card-price">Freemium (Créditos diarios gratis)</div>
-  <div class="card-desc">Alta calidad a menor costo que competidores occidentales. Muy bueno para movimientos realistas.</div>
-  <div class="card-note">⚠ Empresa china (Kuaishou). Disponible globalmente.</div>
-  <a class="card-link" href="https://kling.ai" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+  <div class="card-maker">Uizard</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Pro: $12/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Convierte bocetos y capturas de pantalla en interfaces de apps y webs editables.</div>
+  <a class="card-link" href="https://uizard.io" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="diseno_grafico">
+  <div class="uc-title">Diseño Gráfico, Ilustración y Retoque Editorial</div>
+  <div class="uc-desc">IA para producción visual, ilustración y retoque fotográfico profesional.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Bocetos, Selección de áreas</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Vectores, Rellenos generativos, Efectos de texto</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="integrada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+    <div class="card-name">Adobe Firefly</div>
+  </div>
+  <div class="card-maker">Adobe</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#f97316;color:#f97316">Integrada</span>
+    <span class="price-badge">Incluido en Creative Cloud</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Generative fill, text to vector, recolor. Integrado en Photoshop e Illustrator.</div>
+  <a class="card-link" href="https://firefly.adobe.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
-    <div class="card-name">Seedream</div>
+    <div class="card-name">Midjourney</div>
   </div>
-  <div class="card-maker">ByteDance</div>
-  <div class="card-price">Freemium</div>
-  <div class="card-desc">Modelo de generación de video de ByteDance. Alta calidad en simulación física.</div>
-  <div class="card-note">⚠ Accesible vía plataformas como Artlist. Verificar disponibilidad.</div>
-  <a class="card-link" href="https://kling.ai" target="_blank">↗ Ver sitio</a>
+  <div class="card-maker">Midjourney Inc.</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">De pago (Desde $10/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Alta calidad estética. Estándar en ilustración, concept art y producción visual profesional.</div>
+  <a class="card-link" href="https://www.midjourney.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="diseno_contenido">
+  <div class="uc-title">Diseño de Contenido, Marketing y Branding rápido</div>
+  <div class="uc-desc">IA para crear contenido visual listo para publicar en redes, presentaciones y materiales de marketing.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Imágenes base</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Diseños para redes, Presentaciones</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="integrada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+    <div class="card-name">Canva Magic Studio</div>
+  </div>
+  <div class="card-maker">Canva</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#f97316;color:#f97316">Integrada</span>
+    <span class="price-badge">Freemium (Canva Pro: ~$12/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">IA en Canva: generación de imágenes, eliminación de fondos, diseños para redes y presentaciones.</div>
+  <a class="card-link" href="https://canva.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="integrada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+    <div class="card-name">Adobe Express</div>
+  </div>
+  <div class="card-maker">Adobe</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#f97316;color:#f97316">Integrada</span>
+    <span class="price-badge">Freemium (incluido en Creative Cloud)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Creación rápida de contenido visual con IA. Templates, eliminación de fondos, animaciones.</div>
+  <a class="card-link" href="https://express.adobe.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="diseno_web">
+  <div class="uc-title">Diseño Web (Estructura y UX)</div>
+  <div class="uc-desc">IA para estructurar sitios web, generar sitemaps y wireframes exportables.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto (Descripción del sitio)</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Wireframes interactivos, Mapas de sitio</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Relume</div>
+  </div>
+  <div class="card-maker">Relume</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Planes Pro para agencias)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span></div>
+  <div class="card-desc">Genera wireframes interactivos y mapas de sitio desde texto. Exportable a Figma y Webflow.</div>
+  <a class="card-link" href="https://relume.io" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Framer AI</div>
+  </div>
+  <div class="card-maker">Framer</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Generación de sitios web completos desde texto. IA para layout, copy y estructura.</div>
+  <a class="card-link" href="https://framer.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="branding">
+  <div class="uc-title">Branding e Identidad Visual Básica</div>
+  <div class="uc-desc">IA para generar logos, paletas, tipografías y kits de marca completos.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Nombre de marca, Palabras clave, Preferencias de color</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Logos, Paletas, Tipografías, Kits de marca</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Looka</div>
+  </div>
+  <div class="card-maker">Looka</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Gratis para probar (Pago por descargar)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Genera logos e identidades visuales completas a partir de nombre, sector y preferencias estéticas.</div>
+  <a class="card-link" href="https://looka.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Brandmark</div>
+  </div>
+  <div class="card-maker">Brandmark</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">De pago</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Generación de logos y sistemas de marca con IA. Orientado a identidades minimalistas.</div>
+  <a class="card-link" href="https://brandmark.io" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="postproduccion">
+  <div class="uc-title">Postproducción, Arte Digital, Retoque Fotográfico</div>
+  <div class="uc-desc">IA para escalar, mejorar y retocar imágenes con resultados fotorrealistas.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Imágenes de baja resolución, Texto descriptivo</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Imágenes ultra-escaladas, Detalles fotorrealistas</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Magnific AI</div>
+  </div>
+  <div class="card-maker">Magnific</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">De pago (Desde $39/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Upscaling fotorrealista con IA. Añade detalles y texturas a imágenes de baja resolución.</div>
+  <a class="card-link" href="https://magnific.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="integrada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+    <div class="card-name">Adobe Firefly</div>
+  </div>
+  <div class="card-maker">Adobe</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#f97316;color:#f97316">Integrada</span>
+    <span class="price-badge">Incluido en Creative Cloud</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Generative fill e inpaint en Photoshop. Retoque profesional con IA.</div>
+  <a class="card-link" href="https://firefly.adobe.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="prototipado_rapido">
+  <div class="uc-title">Prototipado Rápido y UI/UX para no-diseñadores</div>
+  <div class="uc-desc">Herramientas accesibles para generar interfaces sin conocimiento técnico de diseño.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Bocetos a mano, Capturas de pantalla, Texto</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Diseños de interfaces de apps y webs editables</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Uizard</div>
+  </div>
+  <div class="card-maker">Uizard</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Pro: $12/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Convierte bocetos a mano y capturas en interfaces editables. Ideal para no-diseñadores.</div>
+  <a class="card-link" href="https://uizard.io" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Galileo AI</div>
+  </div>
+  <div class="card-maker">Galileo</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">De pago</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Genera diseños de interfaces completos desde texto. Orientado a product managers y founders.</div>
+  <a class="card-link" href="https://usegalileo.ai" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="diseno_producto">
+  <div class="uc-title">Diseño de Producto (Industrial) y Automotriz</div>
+  <div class="uc-desc">IA para renders, visualización de producto industrial y prototipado 3D.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Bocetos 2D (Líneas sueltas), Texto</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Renders fotorrealistas en 3D/2D</span></div>
+  </div>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Vizcom</div>
+  </div>
+  <div class="card-maker">Vizcom</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Planes para equipos)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Convierte bocetos 2D en renders fotorrealistas. Especializado en diseño industrial y automotriz.</div>
+  <a class="card-link" href="https://vizcom.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="opensource">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00a878;flex-shrink:0"></div>
+    <div class="card-name">Blender + IA</div>
+  </div>
+  <div class="card-maker">Blender</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#00a878;color:#00a878">Open source</span>
+    <span class="price-badge">Open source (Gratis)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Blender con addons de IA: Dream Textures, denoising OIDN, renders asistidos.</div>
+  <a class="card-link" href="https://blender.org" target="_blank">↗ Ver sitio</a>
 </div></div>
 </div>
 <div class="uc-section" data-id="imagen">
   <div class="uc-title">Generación de imágenes</div>
   <div class="uc-desc">Modelos para generar imágenes de alta calidad desde texto y prompts visuales.</div>
   <div class="uc-io">
-    <div><span>INPUT</span>Texto (Prompts), Imágenes</div>
-    <div><span>OUTPUT</span>Imágenes de Alta Calidad y Concept Art</div>
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Imágenes de referencia</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Imágenes de alta calidad</span></div>
   </div>
-  <div class="cards"><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">Midjourney</div>
   </div>
   <div class="card-maker">Midjourney Inc.</div>
-  <div class="card-price">De pago (Desde $10/mes)</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">De pago (Desde $10/mes)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
   <div class="card-desc">El estándar de calidad estética. Muy usado en diseño y producción visual profesional.</div>
-  
   <a class="card-link" href="https://www.midjourney.com" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
-    <div class="card-name">Stable Diffusion</div>
-  </div>
-  <div class="card-maker">Stability AI</div>
-  <div class="card-price">Open source (Gratis)</div>
-  <div class="card-desc">Modelo texto-a-imagen open source. Base del ecosistema de imagen generativa.</div>
-  
-  <a class="card-link" href="https://stability.ai" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
-    <div class="card-name">Flux</div>
-  </div>
-  <div class="card-maker">Black Forest Labs</div>
-  <div class="card-price">Open source (Gratis)</div>
-  <div class="card-desc">Nueva generación de modelos de imagen open source. Mayor coherencia semántica que SD.</div>
-  
-  <a class="card-link" href="https://blackforestlabs.ai" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
     <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
     <div class="card-name">DALL-E 3</div>
   </div>
   <div class="card-maker">OpenAI</div>
-  <div class="card-price">Incluido en ChatGPT Plus</div>
-  <div class="card-desc">Integrado en ChatGPT. Muy bueno con instrucciones complejas y texto dentro de imágenes.</div>
-  
-  <a class="card-link" href="https://openai.com/dall-e-3" target="_blank">↗ Ver sitio</a>
-</div><div class="card">
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
-    <div class="card-name">Adobe Firefly</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Incluido en ChatGPT Plus</span>
   </div>
-  <div class="card-maker">Adobe</div>
-  <div class="card-price">Incluido en Creative Cloud</div>
-  <div class="card-desc">Integrado en Photoshop e Illustrator. Entrenado con imágenes con licencia.</div>
-  
-  <a class="card-link" href="https://firefly.adobe.com" target="_blank">↗ Ver sitio</a>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Integrado en ChatGPT. Muy bueno con instrucciones complejas y texto dentro de imágenes.</div>
+  <a class="card-link" href="https://openai.com/dall-e-3" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="opensource">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00a878;flex-shrink:0"></div>
+    <div class="card-name">Flux</div>
+  </div>
+  <div class="card-maker">Black Forest Labs</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#00a878;color:#00a878">Open source</span>
+    <span class="price-badge">Open source (Gratis)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Nueva generación de modelos open source. Mayor coherencia semántica que SD.</div>
+  <a class="card-link" href="https://blackforestlabs.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="opensource">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00a878;flex-shrink:0"></div>
+    <div class="card-name">Stable Diffusion</div>
+  </div>
+  <div class="card-maker">Stability AI</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#00a878;color:#00a878">Open source</span>
+    <span class="price-badge">Open source (Gratis)</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Modelo texto-a-imagen open source. Base del ecosistema de imagen generativa.</div>
+  <a class="card-link" href="https://stability.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Ideogram</div>
+  </div>
+  <div class="card-maker">Ideogram</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span></div>
+  <div class="card-desc">Especialmente bueno generando texto tipográfico dentro de imágenes.</div>
+  <a class="card-link" href="https://ideogram.ai" target="_blank">↗ Ver sitio</a>
 </div></div>
 </div>
-</div>
+<div class="uc-section" data-id="video">
+  <div class="uc-title">Generación de video</div>
+  <div class="uc-desc">Modelos para generar video de alta calidad desde texto e imágenes.</div>
+  <div class="uc-io">
+    <div class="io-item"><span class="io-label">INPUT</span><span class="io-val">Texto, Imágenes, Ajustes de cámara</span></div>
+    <div class="io-item"><span class="io-label">OUTPUT</span><span class="io-val">Video HD con simulación física</span></div>
   </div>
-</div>
-
-<!-- HISTORIA -->
-<div id="historia" class="page">
-  <div class="hero">
-    <div class="hero-num">02</div>
-    <div class="hero-label">Historia y origen</div>
-    <h1 class="hero-title">Línea de<br><em>tiempo</em></h1>
-    <p class="hero-sub">Hitos técnicos y culturales. Hacé clic en cada entrada para expandir.</p>
+  <div class="cards"><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Runway Gen-3</div>
   </div>
-  <div class="tl-wrap">
-    <div class="section-header">
-      <div class="section-num">02</div>
-      <div class="section-title">Historia</div>
-    </div>
-    <div class="tl-filters" id="tl-filters"></div>
-    <div id="tl-entries"></div>
+  <div class="card-maker">Runway</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">De pago</span>
   </div>
-</div>
-
-<!-- GLOSARIO -->
-<div id="glosario" class="page">
-  <div class="hero">
-    <div class="hero-num">03</div>
-    <div class="hero-label">Referencia</div>
-    <h1 class="hero-title">Glosario<br><em>de términos</em></h1>
-    <p class="hero-sub">Definiciones del ecosistema. Buscá cualquier término.</p>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span><span class="modal-badge" style="background:#e74c3c18;color:#e74c3c;border-color:#e74c3c44">video</span></div>
+  <div class="card-desc">El más usado en producción audiovisual profesional. Control fino sobre movimiento y estilo.</div>
+  <a class="card-link" href="https://runwayml.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Kling AI</div>
   </div>
-  <div class="glos-wrap">
-    <div class="section-header">
-      <div class="section-num">03</div>
-      <div class="section-title">Glosario</div>
-    </div>
-    <div class="glos-bar">
-      <input class="glos-input" type="text" placeholder="Buscar término..." id="glos-search" oninput="filterGlos()">
-      <div class="glos-count" id="glos-count"></div>
-    </div>
-    <div class="glos-grid" id="glos-grid">
-      <div class="glos-none" id="glos-none">Sin resultados</div>
-    </div>
+  <div class="card-maker">Kuaishou</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">Freemium (Créditos diarios gratis)</span>
   </div>
-</div>
-
-<script>
-// ─── CONFIG ───────────────────────────────────────────────
-const SB_URL = 'https://iykkvndbzlzimgqdszos.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5a2t2bmRiemx6aW1ncWRzem9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1OTA2NzgsImV4cCI6MjA5NTE2NjY3OH0.ZxKBbEyiSJ8SpIclvKF4TgHeOYgD-7MUK3_2ndFFF3A';
-
-async function sbFetch(table) {
-  try {
-    const r = await fetch(`${SB_URL}/rest/v1/${table}?select=*&limit=500&order=id`, {
-      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
-      cache: 'no-store'
-    });
-    if (!r.ok) return null;
-    const d = await r.json();
-    return Array.isArray(d) && d.length ? d : null;
-  } catch(e) {
-    console.warn('sbFetch failed:', table, e);
-    return null;
-  }
-}
-
-// ─── NAV ──────────────────────────────────────────────────
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => {
-    if (b.textContent.toLowerCase().trim() === id) b.classList.add('active');
-  });
-  window.scrollTo(0, 0);
-}
-
-// ─── HERRAMIENTAS ─────────────────────────────────────────
-const FALLBACK_TOOLS = [
-  {usecase_id:'productividad',usecase_title:'Productividad y asistencia general',usecase_desc:'Modelos de uso cotidiano para escritura, resumen, brainstorming y asistencia en tareas diversas.',usecase_input:'Texto, Voz, Imágenes, Archivos',usecase_output:'Texto, Código, Imágenes, Voz',name:'ChatGPT',maker:'OpenAI',price:'Freemium ($20/mes)',access:'private',descripcion:'El modelo más extendido. Incluye generación de imágenes, ejecución de código, navegación web y GPTs personalizados.',note:'',url:'https://chatgpt.com'},
-  {usecase_id:'productividad',usecase_title:'Productividad y asistencia general',usecase_desc:'Modelos de uso cotidiano para escritura, resumen, brainstorming y asistencia en tareas diversas.',usecase_input:'Texto, Voz, Imágenes, Archivos',usecase_output:'Texto, Código, Imágenes, Voz',name:'Ernie Bot',maker:'Baidu',price:'Freemium (Planes corporativos)',access:'private',descripcion:'Principal asistente de IA de Baidu. Profunda integración con el ecosistema chino.',note:'Disponible principalmente en China. Puede requerir VPN fuera del país.',url:'https://yiyan.baidu.com/'},
-  {usecase_id:'multimodalidad',usecase_title:'Multimodalidad y ecosistema de datos',usecase_desc:'Modelos que procesan y combinan múltiples tipos de input.',usecase_input:'Texto, Imágenes, Audio, Video, Código',usecase_output:'Texto, Código, Imágenes, Audio',name:'Gemini',maker:'Google',price:'Freemium ($20/mes)',access:'private',descripcion:'Integrado con Drive, Docs y Gmail. Acceso a información en tiempo real.',note:'',url:'https://gemini.google.com'},
-  {usecase_id:'multimodalidad',usecase_title:'Multimodalidad y ecosistema de datos',usecase_desc:'Modelos que procesan y combinan múltiples tipos de input.',usecase_input:'Texto, Imágenes, Audio, Video, Código',usecase_output:'Texto, Código, Imágenes, Audio',name:'Qwen / Tongyi',maker:'Alibaba',price:'Freemium (Opciones Open source)',access:'open',descripcion:'Modelo multimodal con versiones open source. Muy bueno en código y razonamiento matemático.',note:'Versiones open source descargables en Hugging Face.',url:'https://qwenlm.github.io'},
-  {usecase_id:'razonamiento',usecase_title:'Razonamiento complejo y lógica',usecase_desc:'Modelos especializados en tareas que requieren razonamiento profundo y precisión.',usecase_input:'Texto, Código, Archivos masivos',usecase_output:'Texto, Código de alta precisión, Lógica',name:'Claude',maker:'Anthropic',price:'Freemium ($20/mes)',access:'private',descripcion:'Especialmente bueno en textos largos y razonamiento. 200.000 tokens de contexto.',note:'',url:'https://claude.ai'},
-  {usecase_id:'razonamiento',usecase_title:'Razonamiento complejo y lógica',usecase_desc:'Modelos especializados en tareas que requieren razonamiento profundo y precisión.',usecase_input:'Texto, Código, Archivos masivos',usecase_output:'Texto, Código de alta precisión, Lógica',name:'DeepSeek',maker:'DeepSeek',price:'Freemium (API económica)',access:'open',descripcion:'Modelo chino de alto rendimiento. Sorprendente relación calidad/costo.',note:'Empresa china. Disponible globalmente.',url:'https://www.deepseek.com'},
-  {usecase_id:'busqueda',usecase_title:'Búsqueda e investigación con fuentes',usecase_desc:'Modelos orientados a la búsqueda verificada con citas y fuentes.',usecase_input:'Texto, Enlaces, Documentos',usecase_output:'Texto estructurado con citas de fuentes',name:'Perplexity AI',maker:'Perplexity',price:'Freemium ($20/mes)',access:'private',descripcion:'Motor de búsqueda con IA. Responde con fuentes verificables y citadas.',note:'',url:'https://www.perplexity.ai'},
-  {usecase_id:'busqueda',usecase_title:'Búsqueda e investigación con fuentes',usecase_desc:'Modelos orientados a la búsqueda verificada con citas y fuentes.',usecase_input:'Texto, Enlaces, Documentos',usecase_output:'Texto estructurado con citas de fuentes',name:'Tencent Yuanbao',maker:'Tencent',price:'Gratis (Ecosistema WeChat)',access:'open',descripcion:'Asistente IA de Tencent integrado en el ecosistema WeChat.',note:'Disponible principalmente en China a través de WeChat.',url:'https://hunyuan.tencent.com'},
-  {usecase_id:'documentos',usecase_title:'Análisis de documentos de gran extensión',usecase_desc:'Herramientas para procesar y analizar documentos masivos y PDFs.',usecase_input:'Documentos masivos, PDFs, Enlaces',usecase_output:'Resúmenes, Respuestas analíticas, Audio',name:'NotebookLM',maker:'Google',price:'Gratis',access:'open',descripcion:'Cargá documentos propios y hacé preguntas sobre ellos. Genera resúmenes en audio.',note:'',url:'https://notebooklm.google'},
-  {usecase_id:'documentos',usecase_title:'Análisis de documentos de gran extensión',usecase_desc:'Herramientas para procesar y analizar documentos masivos y PDFs.',usecase_input:'Documentos masivos, PDFs, Enlaces',usecase_output:'Resúmenes, Respuestas analíticas, Audio',name:'Kimi',maker:'Moonshot AI',price:'Freemium (Gran ventana gratuita)',access:'private',descripcion:'Ventana de contexto muy grande de manera gratuita.',note:'Empresa china con presencia internacional.',url:'https://www.kimi.com'},
-  {usecase_id:'voz',usecase_title:'Interacción por voz e integración móvil',usecase_desc:'Modelos con capacidades de voz en tiempo real y optimizados para uso móvil.',usecase_input:'Voz en tiempo real, Texto',usecase_output:'Respuestas de voz hipernaturales',name:'ChatGPT Voice',maker:'OpenAI',price:'Freemium (Integrado en Plus)',access:'private',descripcion:'Conversación de voz en tiempo real con detección de emociones y tono.',note:'',url:'https://chatgpt.com'},
-  {usecase_id:'voz',usecase_title:'Interacción por voz e integración móvil',usecase_desc:'Modelos con capacidades de voz en tiempo real y optimizados para uso móvil.',usecase_input:'Voz en tiempo real, Texto',usecase_output:'Respuestas de voz hipernaturales',name:'Doubao',maker:'ByteDance',price:'Gratis (Ecosistema TikTok)',access:'open',descripcion:'Asistente de voz de ByteDance. Muy popular en China.',note:'Disponible principalmente en China.',url:'https://www.doubao.com'},
-  {usecase_id:'video',usecase_title:'Generación de video',usecase_desc:'Modelos para generar video de alta calidad desde texto e imágenes.',usecase_input:'Texto, Imágenes base, Ajustes de cámara',usecase_output:'Video HD con simulación física',name:'Runway Gen-3',maker:'Runway',price:'De pago',access:'paid',descripcion:'El más usado en producción audiovisual profesional. Control fino sobre movimiento.',note:'',url:'https://runwayml.com'},
-  {usecase_id:'video',usecase_title:'Generación de video',usecase_desc:'Modelos para generar video de alta calidad desde texto e imágenes.',usecase_input:'Texto, Imágenes base, Ajustes de cámara',usecase_output:'Video HD con simulación física',name:'Kling AI',maker:'Kuaishou',price:'Freemium (Créditos diarios gratis)',access:'private',descripcion:'Alta calidad a menor costo que competidores occidentales.',note:'Empresa china (Kuaishou). Disponible globalmente.',url:'https://kling.ai'},
-  {usecase_id:'video',usecase_title:'Generación de video',usecase_desc:'Modelos para generar video de alta calidad desde texto e imágenes.',usecase_input:'Texto, Imágenes base, Ajustes de cámara',usecase_output:'Video HD con simulación física',name:'Seedream',maker:'ByteDance',price:'Freemium',access:'private',descripcion:'Modelo de generación de video de ByteDance. Alta calidad en simulación física.',note:'Accesible vía plataformas como Artlist. Verificar disponibilidad.',url:'https://kling.ai'},
-  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'Midjourney',maker:'Midjourney Inc.',price:'De pago (Desde $10/mes)',access:'paid',descripcion:'El estándar de calidad estética. Muy usado en diseño y producción visual profesional.',note:'',url:'https://www.midjourney.com'},
-  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'Stable Diffusion',maker:'Stability AI',price:'Open source (Gratis)',access:'open',descripcion:'Modelo texto-a-imagen open source. Base del ecosistema de imagen generativa.',note:'',url:'https://stability.ai'},
-  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'DALL-E 3',maker:'OpenAI',price:'Incluido en ChatGPT Plus',access:'private',descripcion:'Integrado en ChatGPT. Muy bueno con instrucciones complejas y texto en imágenes.',note:'',url:'https://openai.com/dall-e-3'},
-  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'Adobe Firefly',maker:'Adobe',price:'Incluido en Creative Cloud',access:'paid',descripcion:'Integrado en Photoshop e Illustrator. Entrenado con imágenes con licencia.',note:'',url:'https://firefly.adobe.com'},
-];
-
-const FALLBACK_HISTORIA = [
-  {year:'1936',title:'On Computable Numbers',cat:'tecnico',short:'Alan Turing sienta las bases matemáticas de la computación.',full_text:'Turing publica "On Computable Numbers". Propone la máquina abstracta que llevará su nombre.',person_name:'Alan Turing (1912–1954)',person_bio:'Matemático británico, padre de la informática teórica. Descifró los códigos Enigma.'},
-  {year:'1943',title:'McCulloch & Pitts',cat:'tecnico',short:'Primer modelo matemático de neurona artificial.',full_text:'Proponen que el cerebro puede describirse como un sistema de cómputo lógico. Origen conceptual de las redes neuronales.',person_name:'Warren McCulloch (1898–1969)',person_bio:'Neurólogo y cibernético. Sentó las bases conceptuales de las redes neuronales.'},
-  {year:'1943',title:'Conferencias Macy',cat:'cultural',short:'Se forja el pensamiento cibernético.',full_text:'Reuniones interdisciplinarias en Nueva York (1946–1953) que reunieron matemáticos, neurocientíficos, antropólogos y psicólogos.',person_name:'',person_bio:''},
-  {year:'1950',title:'Test de Turing',cat:'tecnico',short:'Primer marco para preguntar si una máquina puede pensar.',full_text:'Turing publica "Computing Machinery and Intelligence". Propone el Test de Turing como criterio de inteligencia.',person_name:'Alan Turing (1912–1954)',person_bio:'Matemático británico, padre de la informática teórica.'},
-  {year:'1956',title:'Conferencia de Dartmouth',cat:'tecnico',short:'Nace el término "Inteligencia Artificial".',full_text:'John McCarthy, Marvin Minsky y otros acuñan el término "Inteligencia Artificial". Nace el campo como disciplina formal.',person_name:'John McCarthy (1927–2011)',person_bio:'Acuñó el término "Inteligencia Artificial" y creó el lenguaje LISP.'},
-  {year:'1958',title:'Perceptron',cat:'tecnico',short:'Frank Rosenblatt presenta la primera red neuronal que aprende.',full_text:'El Perceptron es la primera red neuronal artificial capaz de aprender por experiencia.',person_name:'Frank Rosenblatt (1928–1971)',person_bio:'Psicólogo y neurólogo. Su trabajo fue fundamental para el desarrollo del campo.'},
-  {year:'1966',title:'ELIZA',cat:'cultural',short:'Primer chatbot. Revela la tendencia humana a antropomorfizar.',full_text:'Joseph Weizenbaum desarrolla ELIZA en el MIT. Simulaba un psicoterapeuta con reglas simples.',person_name:'Joseph Weizenbaum (1923–2008)',person_bio:'"Computer Power and Human Reason" (1976) sigue siendo una referencia ética fundamental.'},
-  {year:'1974',title:'Primer invierno de la IA',cat:'critico',short:'El optimismo inicial colapsa. Corte de financiamiento.',full_text:'Las promesas de Dartmouth no se cumplen. Hardware insuficiente, algoritmos que no escalan.',person_name:'',person_bio:''},
-  {year:'1987',title:'Segundo invierno',cat:'critico',short:'Los sistemas expertos colapsan ante sus propias limitaciones.',full_text:'Los sistemas expertos son frágiles, caros de mantener y no aprenden. El deshielo llegará cuando converjan: algoritmos + datos masivos + GPUs.',person_name:'',person_bio:''},
-  {year:'1989',title:'Redes CNN',cat:'tecnico',short:'Yann LeCun desarrolla las primeras redes convolucionales.',full_text:'LeCun desarrolla LeNet-5. Primera aplicación práctica del Deep Learning.',person_name:'Yann LeCun (1960)',person_bio:'Científico francés, Director de IA en Meta. Premio Turing 2018.'},
-  {year:'1997',title:'Deep Blue vence a Kasparov',cat:'cultural',short:'La IA supera al humano en ajedrez por primera vez.',full_text:'Deep Blue (IBM) vence al campeón mundial. Hito cultural: primera vez que una máquina supera al mejor humano en un dominio cognitivo complejo.',person_name:'Garry Kasparov (1963)',person_bio:'Considerado el mejor ajedrecista de la historia.'},
-  {year:'2006',title:'Hinton relanza el Deep Learning',cat:'tecnico',short:'Inicio de la era moderna del Deep Learning.',full_text:'Geoffrey Hinton publica trabajos fundamentales que relanzan el interés en redes neuronales profundas.',person_name:'Geoffrey Hinton (1947)',person_bio:'"Padrino del Deep Learning". Premio Turing 2018.'},
-  {year:'2009',title:'ImageNet',cat:'tecnico',short:'El dataset que cambiaría la visión por computadora.',full_text:'Lanzamiento de ImageNet. Su competencia anual será el escenario donde el Deep Learning demostrará su superioridad en 2012.',person_name:'',person_bio:''},
-  {year:'2012',title:'AlexNet',cat:'tecnico',short:'Punto de inflexión definitivo del Deep Learning.',full_text:'AlexNet gana ImageNet con diferencia histórica usando GPUs. El error de clasificación cae a la mitad.',person_name:'',person_bio:''},
-  {year:'2014',title:'GANs',cat:'tecnico',short:'Primera arquitectura capaz de generar imágenes fotorrealistas.',full_text:'Ian Goodfellow propone las Redes Generativas Adversariales. Generador vs Discriminador.',person_name:'Ian Goodfellow (1985)',person_bio:'Una de las contribuciones más importantes de la última década en IA.'},
-  {year:'2016',title:'AlphaGo',cat:'cultural',short:'La IA vence al campeón mundial de Go.',full_text:'AlphaGo (DeepMind) vence a Lee Sedol. El Go era considerado irreducible al cómputo.',person_name:'Lee Sedol (1983)',person_bio:'Se retiró del Go profesional en 2019: "Hay un ser que no puede ser derrotado."'},
-  {year:'2017',title:'Transformers',cat:'tecnico',short:'"Attention is All You Need" — base de toda la IA moderna.',full_text:'Google introduce los Transformers. Analiza todas las palabras simultáneamente. Base de GPT, Claude, Gemini, Stable Diffusion, Flux.',person_name:'',person_bio:''},
-  {year:'2021',title:'CLIP + DALL-E',cat:'tecnico',short:'Texto e imagen se conectan en un espacio compartido.',full_text:'OpenAI presenta CLIP y DALL-E. Puente conceptual que hizo posibles los modelos texto-a-imagen.',person_name:'',person_bio:''},
-  {year:'2022',title:'SD + ChatGPT',cat:'cultural',short:'La IA generativa llega al público general.',full_text:'Stable Diffusion se publica como código abierto. ChatGPT alcanza 100 millones de usuarios en dos meses.',person_name:'',person_bio:''},
-  {year:'2024',title:'Flux + AI Act',cat:'critico',short:'Nuevo estándar open source. Primer marco regulatorio.',full_text:'Black Forest Labs publica Flux. La UE aprueba el AI Act. Proliferación de deepfakes políticos.',person_name:'',person_bio:''},
-  {year:'2025',title:'IA como infraestructura',cat:'cultural',short:'Video desde texto. IA generativa cotidiana.',full_text:'Sora y modelos open source democratizan el video. La IA generativa se convierte en infraestructura cultural.',person_name:'',person_bio:''},
-];
-
-const FALLBACK_GLOSARIO = [
-  {term:'Algoritmo',short:'Serie de instrucciones para realizar cálculos u operaciones.',full_text:'Base de cualquier programa o modelo computacional.'},
-  {term:'Alucinación',short:'Cuando la IA genera información falsa con apariencia de verdad.',full_text:'Característica estructural de los LLMs. Siempre verificar datos críticos.'},
-  {term:'CFG Scale',short:'Controla qué tan estrictamente el modelo sigue el prompt.',full_text:'Valores 6-9: equilibrio recomendado. Por encima de 12 la imagen puede saturarse.'},
-  {term:'Checkpoint',short:'Archivo con todos los pesos de un modelo entrenado.',full_text:'Es el modelo completo. Extensiones: .safetensors o .ckpt. Puede pesar entre 2GB y 20GB.'},
-  {term:'CLIP',short:'Modelo que conecta texto e imagen en un espacio matemático compartido.',full_text:'Contrastive Language-Image Pretraining, OpenAI 2021. No genera imágenes: da al modelo la coordenada semántica del texto dentro del universo visual.'},
-  {term:'CNN',short:'Red neuronal especializada en procesamiento de imágenes.',full_text:'Red Neuronal Convolucional. Capas tempranas: bordes. Capas medias: formas. Capas profundas: conceptos como "rostro" o "árbol".'},
-  {term:'Cosmotécnica',short:'Concepto de Yuk Hui: la técnica como expresión de una cosmología cultural.',full_text:'No existe una tecnología universal. Cada cultura tiene su propia relación con la técnica.'},
-  {term:'Dataset',short:'Conjunto de datos para entrenar o evaluar un modelo.',full_text:'Su calidad y diversidad determinan las capacidades y sesgos del modelo.'},
-  {term:'Deep Learning',short:'Aprendizaje profundo con redes neuronales de muchas capas.',full_text:'Subcampo del Machine Learning. Las capas profundas permiten representaciones complejas.'},
-  {term:'Embedding',short:'Representación numérica de un concepto en el espacio latente.',full_text:'Traducción del lenguaje a números. Conceptos similares tienen embeddings cercanos.'},
-  {term:'Espacio latente',short:'Mapa matemático donde el modelo representa datos de forma comprimida.',full_text:'No trabaja con píxeles sino con vectores. Puntos cercanos = conceptos relacionados.'},
-  {term:'Fine-tuning',short:'Continuar el entrenamiento de un modelo con datos específicos.',full_text:'Permite especializar el modelo sin entrenar desde cero. Base de LoRA y DreamBooth.'},
-  {term:'Flux',short:'Modelo de generación de imágenes de nueva generación, open source.',full_text:'Desarrollado por Black Forest Labs. Estándar actual del ecosistema open source.'},
-  {term:'GAN',short:'Dos redes que compiten para generar imágenes fotorrealistas.',full_text:'Generador vs Discriminador (Goodfellow, 2014). Primera arquitectura en generar imágenes fotorrealistas.'},
-  {term:'GPU',short:'Hardware especializado para entrenamiento e inferencia de IA.',full_text:'Ejecuta miles de operaciones en paralelo. Sin GPUs NVIDIA, los modelos actuales serían inviables.'},
-  {term:'IA Generativa',short:'IA especializada en crear contenido original: texto, imagen, audio, video.',full_text:'Aprende patrones estadísticos de grandes volúmenes de datos para generar contenido nuevo.'},
-  {term:'Inpaint',short:'Regenerar una región específica de una imagen con un prompt.',full_text:'Se selecciona el área con una máscara y el modelo completa esa zona de manera coherente.'},
-  {term:'LLM',short:'Modelo de lenguaje de gran tamaño basado en Transformers.',full_text:'Aprende relaciones estadísticas entre tokens. No "sabe": ha aprendido qué secuencias son probables.'},
-  {term:'LoRA',short:'Archivos ligeros que añaden estilos o conceptos al modelo base.',full_text:'Low-Rank Adaptation. 50-200MB vs GB de un checkpoint. Combinables sin modificar el modelo original.'},
-  {term:'Modelo de difusión',short:'Arquitectura que aprende a revertir un proceso de agregado de ruido.',full_text:'Entrenamiento: se agrega ruido. Generación: el modelo parte de ruido y lo elimina guiado por el prompt.'},
-  {term:'Prompt',short:'Instrucción en lenguaje natural que guía la generación.',full_text:'El orden importa: los primeros elementos tienen más peso.'},
-  {term:'RAG',short:'Conecta el LLM con fuentes externas para reducir alucinaciones.',full_text:'Generación Aumentada por Recuperación. Antes de responder, busca información en una base confiable.'},
-  {term:'Sampler',short:'Algoritmo que guía el proceso de difusión inversa.',full_text:'Euler A: rápido. DPM++ 2M Karras: detallado. DDIM: ideal para video.'},
-  {term:'Seed',short:'Número inicial del generador aleatorio.',full_text:'Fijar un valor permite reproducir exactamente el mismo resultado.'},
-  {term:'Sesgo',short:'Tendencia a resultados parciales por los datos de entrenamiento.',full_text:'Los modelos reproducen y amplifican sesgos de sus datos de entrenamiento.'},
-  {term:'Token',short:'Unidad mínima de texto que procesa el modelo.',full_text:'GPT-4: 128.000 tokens de contexto. Claude: 200.000. Las APIs se cobran por tokens.'},
-  {term:'Transformer',short:'Arquitectura base de todos los grandes modelos modernos.',full_text:'Google, 2017. Analiza todas las palabras simultáneamente con mecanismos de atención.'},
-  {term:'VAE',short:'Traduce entre el espacio de píxeles y el espacio latente.',full_text:'Variational Autoencoder. Encoder: comprime. Decoder: traduce a píxeles visibles.'},
-];
-
-// ─── BUILD HERRAMIENTAS ───────────────────────────────────
-function buildHerramientas(data) {
-  const bar = document.getElementById('uc-bar');
-  const sections = document.getElementById('uc-sections');
-  bar.innerHTML = ''; sections.innerHTML = '';
-
-  // Group by usecase
-  const groups = {};
-  data.forEach(r => {
-    if (!groups[r.usecase_id]) {
-      groups[r.usecase_id] = {
-        id: r.usecase_id,
-        title: r.usecase_title,
-        desc: r.usecase_desc,
-        input: r.usecase_input,
-        output: r.usecase_output,
-        tools: []
-      };
-    }
-    groups[r.usecase_id].tools.push(r);
-  });
-
-  const ucList = Object.values(groups);
-
-  // All button
-  const allBtn = document.createElement('button');
-  allBtn.className = 'uc-btn on';
-  allBtn.textContent = 'Todos';
-  allBtn.onclick = () => {
-    document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
-    allBtn.classList.add('on');
-    document.querySelectorAll('.uc-section').forEach(s => s.classList.remove('hidden'));
-  };
-  bar.appendChild(allBtn);
-
-  ucList.forEach(uc => {
-    // Filter btn
-    const btn = document.createElement('button');
-    btn.className = 'uc-btn';
-    btn.textContent = uc.title;
-    btn.onclick = () => {
-      document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
-      btn.classList.add('on');
-      document.querySelectorAll('.uc-section').forEach(s => {
-        s.classList.toggle('hidden', s.dataset.id !== uc.id);
-      });
-    };
-    bar.appendChild(btn);
-
-    // Section
-    const sec = document.createElement('div');
-    sec.className = 'uc-section';
-    sec.dataset.id = uc.id;
-    sec.innerHTML = `
-      <div class="uc-head"><div class="uc-title">${uc.title}</div></div>
-      <div class="uc-desc">${uc.desc}</div>
-      <div class="uc-io">
-        <div><span>INPUT</span>${uc.input}</div>
-        <div><span>OUTPUT</span>${uc.output}</div>
-      </div>
-      <div class="cards" id="cards-${uc.id}"></div>
-    `;
-    sections.appendChild(sec);
-
-    const cardsEl = sec.querySelector(`#cards-${uc.id}`);
-    uc.tools.forEach(t => {
-      const dotColor = t.access === 'open' ? 'var(--green)' : t.access === 'paid' ? 'var(--orange)' : 'var(--blue)';
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
-          <div style="width:10px;height:10px;border-radius:50%;background:${dotColor};flex-shrink:0;box-shadow:0 0 6px ${dotColor}44"></div>
-          <div class="card-name">${t.name}</div>
-        </div>
-        <div class="card-maker">${t.maker}</div>
-        <div class="card-price">${t.price}</div>
-        <div class="card-desc">${t.descripcion || ''}</div>
-        ${t.note ? `<div class="card-note">⚠ ${t.note}</div>` : ''}
-        ${t.url ? `<a class="card-link" href="${t.url}" target="_blank">↗ Ver sitio</a>` : ''}
-      `;
-      cardsEl.appendChild(card);
-    });
-  });
-}
-
-// ─── BUILD HISTORIA ───────────────────────────────────────
-const TL_CATS = {
-  tecnico:  { label: 'Técnico',  color: '#00aaff' },
-  cultural: { label: 'Cultural', color: '#c8ff00' },
-  critico:  { label: 'Crítico',  color: '#ff4466' },
-};
-let activeCats = new Set(['tecnico','cultural','critico']);
-
-function buildHistoria(data) {
-  const filtersEl = document.getElementById('tl-filters');
-  const entriesEl = document.getElementById('tl-entries');
-  filtersEl.innerHTML = ''; entriesEl.innerHTML = '';
-
-  // All btn
-  const allBtn = document.createElement('button');
-  allBtn.className = 'tl-btn on';
-  allBtn.textContent = 'Todos';
-  allBtn.onclick = () => {
-    activeCats = new Set(['tecnico','cultural','critico']);
-    filtersEl.querySelectorAll('.tl-btn').forEach(b => b.classList.add('on'));
-    updateTL();
-  };
-  filtersEl.appendChild(allBtn);
-
-  Object.entries(TL_CATS).forEach(([key, cat]) => {
-    const btn = document.createElement('button');
-    btn.className = 'tl-btn on';
-    btn.textContent = cat.label;
-    btn.onclick = () => {
-      if (activeCats.has(key)) { activeCats.delete(key); btn.classList.remove('on'); }
-      else { activeCats.add(key); btn.classList.add('on'); }
-      updateTL();
-    };
-    filtersEl.appendChild(btn);
-  });
-
-  data.forEach(item => {
-    const cat = TL_CATS[item.cat] || TL_CATS.tecnico;
-    const entry = document.createElement('div');
-    entry.className = 'tl-entry';
-    entry.dataset.cat = item.cat;
-    entry.innerHTML = `
-      <div class="tl-year">${item.year}</div>
-      <div class="tl-line"></div>
-      <div class="tl-body">
-        <span class="tl-tag" style="background:${cat.color}18;color:${cat.color};border-color:${cat.color}44">${cat.label}</span>
-        <div class="tl-title">${item.title}</div>
-        <div class="tl-short">${item.short}</div>
-        <div class="tl-full">
-          <div class="tl-full-text">${item.full_text}</div>
-          ${item.person_name ? `<div class="tl-person"><div class="tl-person-name">${item.person_name}</div><div class="tl-person-bio">${item.person_bio}</div></div>` : ''}
-        </div>
-        <span class="tl-more">+ expandir</span>
-      </div>
-    `;
-    entry.onclick = () => {
-      entry.classList.toggle('open');
-      entry.querySelector('.tl-more').textContent =
-        entry.classList.contains('open') ? '− cerrar' : '+ expandir';
-    };
-    entriesEl.appendChild(entry);
-  });
-}
-
-function updateTL() {
-  document.querySelectorAll('.tl-entry').forEach(e => {
-    e.classList.toggle('out', !activeCats.has(e.dataset.cat));
-  });
-}
-
-// ─── BUILD GLOSARIO ───────────────────────────────────────
-function buildGlosario(data) {
-  const grid = document.getElementById('glos-grid');
-  const none = document.getElementById('glos-none');
-  const sorted = [...data].sort((a, b) => a.term.localeCompare(b.term, 'es'));
-
-  sorted.forEach((item, i) => {
-    const el = document.createElement('div');
-    el.className = 'glos-item';
-    el.dataset.search = (item.term + ' ' + item.short + ' ' + (item.full_text || '')).toLowerCase();
-    el.innerHTML = `
-      <div class="glos-num">${String(i + 1).padStart(2, '0')}</div>
-      <div class="glos-term">${item.term}</div>
-      <div class="glos-short">${item.short}</div>
-      ${item.full_text ? `<div class="glos-full">${item.full_text}</div>` : ''}
-    `;
-    grid.insertBefore(el, none);
-  });
-
-  document.getElementById('glos-count').textContent = `${sorted.length} / ${sorted.length} términos`;
-}
-
-function filterGlos() {
-  const q = document.getElementById('glos-search').value.toLowerCase().trim();
-  let n = 0;
-  document.querySelectorAll('.glos-item').forEach(el => {
-    const show = !q || el.dataset.search.includes(q);
-    el.classList.toggle('hidden', !show);
-    if (show) n++;
-  });
-  document.getElementById('glos-none').style.display = n === 0 ? 'block' : 'none';
-  const total = document.querySelectorAll('.glos-item').length;
-  document.getElementById('glos-count').textContent = `${n} / ${total} términos`;
-}
-
-// ─── FILTER FUNCTIONS ─────────────────────────────────────
-function filterAll() {
-  document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
-  document.querySelector('.uc-btn').classList.add('on');
-  document.querySelectorAll('.uc-section').forEach(s => s.style.display = '');
-}
-
-function filterSection(id) {
-  document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
-  event.target.classList.add('on');
-  document.querySelectorAll('.uc-section').forEach(s => {
-    s.style.display = s.dataset.id === id ? '' : 'none';
-  });
-}
-
-// ─── INIT ─────────────────────────────────────────────────
-buildHistoria(FALLBACK_HISTORIA);
-buildGlosario(FALLBACK_GLOSARIO);
-
-(async () => {
-  try {
-    const [tools, historia, glosario] = await Promise.all([
-      sbFetch('usecase_tools'),
-      sbFetch('historia'),
-      sbFetch('glosario')
-    ]);
-
-    if (tools && tools.length) {
-      // Rebuild herramientas from Supabase
-      const ACCESS_COLOR_MAP = { open: '#00c48c', private: '#0099ff', paid: '#f97316' };
-      const groups = {};
-      tools.forEach(r => {
-        if (!groups[r.usecase_id]) groups[r.usecase_id] = {
-          id: r.usecase_id, title: r.usecase_title,
-          desc: r.usecase_desc, input: r.usecase_input,
-          output: r.usecase_output, tools: []
-        };
-        groups[r.usecase_id].tools.push(r);
-      });
-
-      let filterHTML = '<button class="uc-btn on" onclick="filterAll()">Todos</button>
+  <div class="modal-badges"><span class="modal-badge" style="background:#0099ff18;color:#0099ff;border-color:#0099ff44">texto</span><span class="modal-badge" style="background:#9b59b618;color:#9b59b6;border-color:#9b59b644">imagen</span><span class="modal-badge" style="background:#e74c3c18;color:#e74c3c;border-color:#e74c3c44">video</span></div>
+  <div class="card-desc">Alta calidad a menor costo. Muy bueno para movimientos realistas.</div>
+  <div class="card-note">⚠ Empresa china. Disponible globalmente.</div><a class="card-link" href="https://kling.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card" data-access="privada">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Sora</div>
+  </div>
+  <div class="card-maker">OpenAI</div>
+  <div class="card-row-badges">
+    <span class="access-badge" style="border-color:#0099ff;color:#0099ff">Privada</span>
+    <span class="price-badge">De pago</span>
+  </div>
+  <div class="modal-badges"><span class="modal-badge
