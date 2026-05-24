@@ -1022,31 +1022,28 @@ function filterSection(id) {
 }
 
 // ─── INIT ─────────────────────────────────────────────────
-// Historia y glosario se construyen dinámicamente
 buildHistoria(FALLBACK_HISTORIA);
 buildGlosario(FALLBACK_GLOSARIO);
 
-// Supabase en background para historia y glosario
 (async () => {
   try {
-    const [historia, glosario] = await Promise.all([
+    const [tools, historia, glosario] = await Promise.all([
+      sbFetch('usecase_tools'),
       sbFetch('historia'),
       sbFetch('glosario')
     ]);
-    if (historia && historia.length) {
-      document.getElementById('tl-filters').innerHTML = '';
-      document.getElementById('tl-entries').innerHTML = '';
-      buildHistoria(historia);
-    }
-    if (glosario && glosario.length) {
-      const grid = document.getElementById('glos-grid');
-      const none = document.getElementById('glos-none');
-      grid.innerHTML = '';
-      grid.appendChild(none);
-      buildGlosario(glosario);
-    }
-  } catch(e) { console.warn('Supabase:', e); }
-})();
-</script>
-</body>
-</html>
+
+    if (tools && tools.length) {
+      // Rebuild herramientas from Supabase
+      const ACCESS_COLOR_MAP = { open: '#00c48c', private: '#0099ff', paid: '#f97316' };
+      const groups = {};
+      tools.forEach(r => {
+        if (!groups[r.usecase_id]) groups[r.usecase_id] = {
+          id: r.usecase_id, title: r.usecase_title,
+          desc: r.usecase_desc, input: r.usecase_input,
+          output: r.usecase_output, tools: []
+        };
+        groups[r.usecase_id].tools.push(r);
+      });
+
+      let filterHTML = '<button class="uc-btn on" onclick="filterAll()">Todos</button>
