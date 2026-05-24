@@ -380,8 +380,289 @@ nav {
       <div class="uc-leg"><div class="uc-dot" style="background:var(--blue)"></div>Privado / Freemium</div>
       <div class="uc-leg"><div class="uc-dot" style="background:var(--orange)"></div>De pago</div>
     </div>
-    <div class="uc-bar" id="uc-bar"></div>
-    <div id="uc-sections"></div>
+    <div class="uc-bar" id="uc-bar"><button class="uc-btn on" onclick="filterAll()">Todos</button>
+<button class="uc-btn" onclick="filterSection('productividad')">Productividad y asistencia general</button>
+<button class="uc-btn" onclick="filterSection('multimodalidad')">Multimodalidad y ecosistema de datos</button>
+<button class="uc-btn" onclick="filterSection('razonamiento')">Razonamiento complejo y lógica</button>
+<button class="uc-btn" onclick="filterSection('busqueda')">Búsqueda e investigación con fuentes</button>
+<button class="uc-btn" onclick="filterSection('documentos')">Análisis de documentos de gran extensión</button>
+<button class="uc-btn" onclick="filterSection('voz')">Interacción por voz e integración móvil</button>
+<button class="uc-btn" onclick="filterSection('video')">Generación de video</button>
+<button class="uc-btn" onclick="filterSection('imagen')">Generación de imágenes</button>
+</div>
+    <div id="uc-sections"><div class="uc-section" data-id="productividad">
+  <div class="uc-title">Productividad y asistencia general</div>
+  <div class="uc-desc">Modelos de uso cotidiano para escritura, resumen, brainstorming y asistencia en tareas diversas.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Texto, Voz, Imágenes, Archivos</div>
+    <div><span>OUTPUT</span>Texto, Código, Imágenes, Voz</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">ChatGPT</div>
+  </div>
+  <div class="card-maker">OpenAI</div>
+  <div class="card-price">Freemium ($20/mes)</div>
+  <div class="card-desc">El modelo más extendido. Incluye generación de imágenes, ejecución de código, navegación web y GPTs personalizados.</div>
+  
+  <a class="card-link" href="https://chatgpt.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Ernie Bot</div>
+  </div>
+  <div class="card-maker">Baidu</div>
+  <div class="card-price">Freemium (Planes corporativos)</div>
+  <div class="card-desc">Principal asistente de IA de Baidu. Profunda integración con el ecosistema chino.</div>
+  <div class="card-note">⚠ Disponible principalmente en China. Puede requerir VPN fuera del país.</div>
+  <a class="card-link" href="https://yiyan.baidu.com/" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="multimodalidad">
+  <div class="uc-title">Multimodalidad y ecosistema de datos</div>
+  <div class="uc-desc">Modelos que procesan y combinan múltiples tipos de input: texto, imágenes, audio, video y código.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Texto, Imágenes, Audio, Video, Código</div>
+    <div><span>OUTPUT</span>Texto, Código, Imágenes, Audio</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Gemini</div>
+  </div>
+  <div class="card-maker">Google</div>
+  <div class="card-price">Freemium ($20/mes)</div>
+  <div class="card-desc">Integrado con Drive, Docs y Gmail. Acceso a información en tiempo real. Multimodal nativo.</div>
+  
+  <a class="card-link" href="https://gemini.google.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+    <div class="card-name">Qwen / Tongyi</div>
+  </div>
+  <div class="card-maker">Alibaba</div>
+  <div class="card-price">Freemium (Opciones Open source)</div>
+  <div class="card-desc">Modelo multimodal con versiones open source. Muy bueno en código y razonamiento matemático.</div>
+  <div class="card-note">⚠ Versiones open source descargables en Hugging Face.</div>
+  <a class="card-link" href="https://qwenlm.github.io" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="razonamiento">
+  <div class="uc-title">Razonamiento complejo y lógica</div>
+  <div class="uc-desc">Modelos especializados en tareas que requieren razonamiento profundo, análisis y precisión.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Texto, Código, Archivos masivos</div>
+    <div><span>OUTPUT</span>Texto, Código de alta precisión, Lógica</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Claude</div>
+  </div>
+  <div class="card-maker">Anthropic</div>
+  <div class="card-price">Freemium ($20/mes)</div>
+  <div class="card-desc">Especialmente bueno en textos largos y razonamiento. 200.000 tokens de contexto.</div>
+  
+  <a class="card-link" href="https://claude.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+    <div class="card-name">DeepSeek</div>
+  </div>
+  <div class="card-maker">DeepSeek</div>
+  <div class="card-price">Freemium (API económica)</div>
+  <div class="card-desc">Modelo chino de alto rendimiento. Sorprendente relación calidad/costo. Versiones open source disponibles.</div>
+  <div class="card-note">⚠ Empresa china. Disponible globalmente.</div>
+  <a class="card-link" href="https://www.deepseek.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="busqueda">
+  <div class="uc-title">Búsqueda e investigación con fuentes</div>
+  <div class="uc-desc">Modelos orientados a la búsqueda verificada con citas y fuentes.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Texto, Enlaces, Documentos</div>
+    <div><span>OUTPUT</span>Texto estructurado con citas de fuentes</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Perplexity AI</div>
+  </div>
+  <div class="card-maker">Perplexity</div>
+  <div class="card-price">Freemium ($20/mes)</div>
+  <div class="card-desc">Motor de búsqueda con IA. Responde con fuentes verificables y citadas. Ideal para investigación.</div>
+  
+  <a class="card-link" href="https://www.perplexity.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+    <div class="card-name">Tencent Yuanbao</div>
+  </div>
+  <div class="card-maker">Tencent</div>
+  <div class="card-price">Gratis (Ecosistema WeChat)</div>
+  <div class="card-desc">Asistente IA de Tencent integrado en el ecosistema WeChat.</div>
+  <div class="card-note">⚠ Disponible principalmente en China.</div>
+  <a class="card-link" href="https://hunyuan.tencent.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="documentos">
+  <div class="uc-title">Análisis de documentos de gran extensión</div>
+  <div class="uc-desc">Herramientas para procesar y analizar documentos masivos, PDFs y fuentes múltiples.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Documentos masivos, PDFs, Enlaces</div>
+    <div><span>OUTPUT</span>Resúmenes, Respuestas analíticas, Audio</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+    <div class="card-name">NotebookLM</div>
+  </div>
+  <div class="card-maker">Google</div>
+  <div class="card-price">Gratis</div>
+  <div class="card-desc">Cargá documentos propios y hacé preguntas sobre ellos. Genera resúmenes en audio.</div>
+  
+  <a class="card-link" href="https://notebooklm.google" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Kimi</div>
+  </div>
+  <div class="card-maker">Moonshot AI</div>
+  <div class="card-price">Freemium (Gran ventana gratuita)</div>
+  <div class="card-desc">Ventana de contexto muy grande de manera gratuita. Especializado en análisis de documentos extensos.</div>
+  <div class="card-note">⚠ Empresa china con presencia internacional.</div>
+  <a class="card-link" href="https://www.kimi.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="voz">
+  <div class="uc-title">Interacción por voz e integración móvil</div>
+  <div class="uc-desc">Modelos con capacidades de voz en tiempo real y optimizados para uso móvil.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Voz en tiempo real, Texto</div>
+    <div><span>OUTPUT</span>Respuestas de voz hipernaturales</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">ChatGPT Voice</div>
+  </div>
+  <div class="card-maker">OpenAI</div>
+  <div class="card-price">Freemium (Integrado en Plus)</div>
+  <div class="card-desc">Conversación de voz en tiempo real con detección de emociones y tono.</div>
+  
+  <a class="card-link" href="https://chatgpt.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+    <div class="card-name">Doubao</div>
+  </div>
+  <div class="card-maker">ByteDance</div>
+  <div class="card-price">Gratis (Ecosistema TikTok)</div>
+  <div class="card-desc">Asistente de voz de ByteDance. Muy popular en China.</div>
+  <div class="card-note">⚠ Disponible principalmente en China.</div>
+  <a class="card-link" href="https://www.doubao.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="video">
+  <div class="uc-title">Generación de video</div>
+  <div class="uc-desc">Modelos para generar video de alta calidad desde texto e imágenes.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Texto, Imágenes base, Ajustes de cámara</div>
+    <div><span>OUTPUT</span>Video HD con simulación física</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+    <div class="card-name">Runway Gen-3</div>
+  </div>
+  <div class="card-maker">Runway</div>
+  <div class="card-price">De pago</div>
+  <div class="card-desc">El más usado en producción audiovisual profesional. Control fino sobre movimiento y estilo.</div>
+  
+  <a class="card-link" href="https://runwayml.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Kling AI</div>
+  </div>
+  <div class="card-maker">Kuaishou</div>
+  <div class="card-price">Freemium (Créditos diarios gratis)</div>
+  <div class="card-desc">Alta calidad a menor costo que competidores occidentales. Muy bueno para movimientos realistas.</div>
+  <div class="card-note">⚠ Empresa china (Kuaishou). Disponible globalmente.</div>
+  <a class="card-link" href="https://kling.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">Seedream</div>
+  </div>
+  <div class="card-maker">ByteDance</div>
+  <div class="card-price">Freemium</div>
+  <div class="card-desc">Modelo de generación de video de ByteDance. Alta calidad en simulación física.</div>
+  <div class="card-note">⚠ Accesible vía plataformas como Artlist. Verificar disponibilidad.</div>
+  <a class="card-link" href="https://kling.ai" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+<div class="uc-section" data-id="imagen">
+  <div class="uc-title">Generación de imágenes</div>
+  <div class="uc-desc">Modelos para generar imágenes de alta calidad desde texto y prompts visuales.</div>
+  <div class="uc-io">
+    <div><span>INPUT</span>Texto (Prompts), Imágenes</div>
+    <div><span>OUTPUT</span>Imágenes de Alta Calidad y Concept Art</div>
+  </div>
+  <div class="cards"><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+    <div class="card-name">Midjourney</div>
+  </div>
+  <div class="card-maker">Midjourney Inc.</div>
+  <div class="card-price">De pago (Desde $10/mes)</div>
+  <div class="card-desc">El estándar de calidad estética. Muy usado en diseño y producción visual profesional.</div>
+  
+  <a class="card-link" href="https://www.midjourney.com" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+    <div class="card-name">Stable Diffusion</div>
+  </div>
+  <div class="card-maker">Stability AI</div>
+  <div class="card-price">Open source (Gratis)</div>
+  <div class="card-desc">Modelo texto-a-imagen open source. Base del ecosistema de imagen generativa.</div>
+  
+  <a class="card-link" href="https://stability.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#00c48c;flex-shrink:0"></div>
+    <div class="card-name">Flux</div>
+  </div>
+  <div class="card-maker">Black Forest Labs</div>
+  <div class="card-price">Open source (Gratis)</div>
+  <div class="card-desc">Nueva generación de modelos de imagen open source. Mayor coherencia semántica que SD.</div>
+  
+  <a class="card-link" href="https://blackforestlabs.ai" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#0099ff;flex-shrink:0"></div>
+    <div class="card-name">DALL-E 3</div>
+  </div>
+  <div class="card-maker">OpenAI</div>
+  <div class="card-price">Incluido en ChatGPT Plus</div>
+  <div class="card-desc">Integrado en ChatGPT. Muy bueno con instrucciones complejas y texto dentro de imágenes.</div>
+  
+  <a class="card-link" href="https://openai.com/dall-e-3" target="_blank">↗ Ver sitio</a>
+</div><div class="card">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <div style="width:10px;height:10px;border-radius:50%;background:#f97316;flex-shrink:0"></div>
+    <div class="card-name">Adobe Firefly</div>
+  </div>
+  <div class="card-maker">Adobe</div>
+  <div class="card-price">Incluido en Creative Cloud</div>
+  <div class="card-desc">Integrado en Photoshop e Illustrator. Entrenado con imágenes con licencia.</div>
+  
+  <a class="card-link" href="https://firefly.adobe.com" target="_blank">↗ Ver sitio</a>
+</div></div>
+</div>
+</div>
   </div>
 </div>
 
@@ -720,4 +1001,52 @@ function filterGlos() {
     el.classList.toggle('hidden', !show);
     if (show) n++;
   });
-  document.getElem
+  document.getElementById('glos-none').style.display = n === 0 ? 'block' : 'none';
+  const total = document.querySelectorAll('.glos-item').length;
+  document.getElementById('glos-count').textContent = `${n} / ${total} términos`;
+}
+
+// ─── FILTER FUNCTIONS ─────────────────────────────────────
+function filterAll() {
+  document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
+  document.querySelector('.uc-btn').classList.add('on');
+  document.querySelectorAll('.uc-section').forEach(s => s.style.display = '');
+}
+
+function filterSection(id) {
+  document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
+  event.target.classList.add('on');
+  document.querySelectorAll('.uc-section').forEach(s => {
+    s.style.display = s.dataset.id === id ? '' : 'none';
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+// Historia y glosario se construyen dinámicamente
+buildHistoria(FALLBACK_HISTORIA);
+buildGlosario(FALLBACK_GLOSARIO);
+
+// Supabase en background para historia y glosario
+(async () => {
+  try {
+    const [historia, glosario] = await Promise.all([
+      sbFetch('historia'),
+      sbFetch('glosario')
+    ]);
+    if (historia && historia.length) {
+      document.getElementById('tl-filters').innerHTML = '';
+      document.getElementById('tl-entries').innerHTML = '';
+      buildHistoria(historia);
+    }
+    if (glosario && glosario.length) {
+      const grid = document.getElementById('glos-grid');
+      const none = document.getElementById('glos-none');
+      grid.innerHTML = '';
+      grid.appendChild(none);
+      buildGlosario(glosario);
+    }
+  } catch(e) { console.warn('Supabase:', e); }
+})();
+</script>
+</body>
+</html>
