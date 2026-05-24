@@ -777,17 +777,30 @@ function observeReveals() {
 }
 
 // ══════════════════════════════════
-// APPS SCRIPT FETCH
+// SUPABASE FETCH
 // ══════════════════════════════════
-const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbxo-v-KoNJaOA3S_JJS1n8iStrBGYzFvUwUdsWqvzzm6g8A2dZJgFFpSswqqfosoCucRw/exec';
+const SUPABASE_URL = 'https://iykkvndbzlzimgqdszos.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_XlqMPGHTgCgQ-AuqS64c4w_cU5oYwVt';
 
 async function fetchSheet(tab) {
   try {
-    const res = await fetch(`${APPS_SCRIPT}?sheet=${encodeURIComponent(tab)}`);
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${tab}?select=*&limit=500`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    });
     const data = await res.json();
+    // Map column names back
+    if (tab === 'herramientas') {
+      return data.map(r => ({...r, desc: r.descripcion}));
+    }
+    if (tab === 'historia' || tab === 'glosario') {
+      return data.map(r => ({...r, full: r.full_text}));
+    }
     return Array.isArray(data) && data.length ? data : null;
   } catch(e) {
-    console.warn('fetchSheet falló para', tab);
+    console.warn('Supabase fetch falló para', tab);
     return null;
   }
 }
@@ -967,9 +980,40 @@ const USE_CASES = [
 // ══════════════════════════════════
 let mapBuilt = false;
 
+async function loadAndBuildMap() {
+  mapBuilt = true;
+  const rows = await fetchSheet('usecase_tools');
+  if (rows && rows.length) {
+    USE_CASES.length = 0;
+    const grouped = {};
+    rows.forEach(r => {
+      if (!grouped[r.usecase_id]) {
+        grouped[r.usecase_id] = {
+          id: r.usecase_id,
+          title: r.usecase_title,
+          desc: r.usecase_desc,
+          input: r.usecase_input,
+          output: r.usecase_output,
+          tools: []
+        };
+        USE_CASES.push(grouped[r.usecase_id]);
+      }
+      grouped[r.usecase_id].tools.push({
+        name: r.name,
+        maker: r.maker,
+        price: r.price,
+        access: r.access,
+        desc: r.descripcion,
+        note: r.note || '',
+        url: r.url || ''
+      });
+    });
+  }
+  buildMap();
+}
+
 function buildMap() {
   mapBuilt = true;
-
   const filtersEl = document.getElementById('uc-filters');
   const sectionsEl = document.getElementById('uc-sections');
 
@@ -1117,109 +1161,6 @@ const GLOSSARY = [
 let mapBuilt = false;
 let activeChip = null;
 
-async function loadAndBuildMap() {
-  mapBuilt = true;
-  const grid = document.getElementById('map-grid');
-  grid.innerHTML = '<div style="padding:40px;font-family:var(--font-mono);font-size:11px;color:var(--cyber);letter-spacing:.15em;text-transform:uppercase;">Cargando herramientas...</div>';
-  const rows = await fetchSheet('herramientas');
-  if (rows && rows.length) {
-    TOOLS.length = 0;
-    rows.forEach(r => {
-      if (r.id) TOOLS.push({id:r.id,name:r.name,mod:(r.mod||'').split('|').filter(Boolean),col:r.col,access:r.access||'private',desc:r.desc||'',para:r.para||'',url:r.url||'',related:(r.related||'').split('|').filter(Boolean)});
-    });
-    TOOLS.forEach(t => TOOL_MAP[t.id] = t);
-  }
-  buildMap();
-}
-
-function buildMap() {
-  const grid = document.getElementById('map-grid');
-  grid.innerHTML = '';
-
-  const corner = document.createElement('div');
-  corner.className = 'col-header modality';
-  corner.style.cssText = 'border-right:1px solid var(--border);border-bottom:1px solid var(--border);';
-  grid.appendChild(corner);
-
-  COLS.forEach(col => {
-    const h = document.createElement('div');
-    h.className = 'col-header';
-    h.innerHTML = `<div class="col-header-label">${col.label}</div><div class="col-header-sub">${col.sub}</div>`;
-    grid.appendChild(h);
-  });
-
-  MODALITIES.forEach(mod => {
-    const label = document.createElement('div');
-    label.className = 'row-label';
-    label.innerHTML = `<div class="row-label-dot" style="background:${mod.color}"></div><div class="row-label-text">${mod.label}</div>`;
-    grid.appendChild(label);
-
-    COLS.forEach(col => {
-      const cell = document.createElement('div');
-      cell.className = 'map-cell';
-      const tools = TOOLS.filter(t => t.mod.includes(mod.id) && t.col === col.id);
-      tools.forEach(tool => {
-        const chip = document.createElement('div');
-        chip.className = 'tool-chip';
-        chip.id = `chip-${tool.id}`;
-        chip.setAttribute('data-click','');
-        chip.setAttribute('data-id', tool.id);
-        const color = ACCESS_COLOR[tool.access] || ACCESS_COLOR.private;
-        chip.innerHTML = `<div class="chip-dot" style="background:${color}"></div><div class="chip-name">${tool.name}</div>`;
-        chip.addEventListener('click', e => {
-          e.stopPropagation();
-          selectChip(tool.id === activeChip ? null : tool.id);
-        });
-        cell.appendChild(chip);
-      });
-      grid.appendChild(cell);
-    });
-  });
-
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.tool-chip') && !e.target.closest('.map-panel')) selectChip(null);
-  });
-  setTimeout(observeReveals, 50);
-}
-
-function selectChip(id) {
-  activeChip = id;
-  document.querySelectorAll('.tool-chip').forEach(c => c.classList.remove('active','related','dimmed'));
-  if (!id) { closePanel(); return; }
-  const tool = TOOL_MAP[id];
-  if (!tool) return;
-  const related = new Set([id, ...(tool.related||[])]);
-  document.querySelectorAll('.tool-chip').forEach(c => {
-    const cid = c.dataset.id;
-    if (cid === id) c.classList.add('active');
-    else if (related.has(cid)) c.classList.add('related');
-    else c.classList.add('dimmed');
-  });
-  showPanel(tool, related);
-}
-
-function showPanel(tool, related) {
-  const color = ACCESS_COLOR[tool.access] || ACCESS_COLOR.private;
-  const label = ACCESS_LABEL[tool.access] || 'Privado';
-  const relatedTools = [...related].filter(rid=>rid!==tool.id).map(rid=>TOOL_MAP[rid]).filter(Boolean);
-  document.getElementById('panel-body').innerHTML = `
-    <div class="p-tag"><div class="p-dot" style="background:${color}"></div><span style="color:${color}">${label}</span></div>
-    <div class="p-name">${tool.name}</div>
-    <div class="p-type">${tool.mod.map(m=>MODALITIES.find(mo=>mo.id===m)?.label||m).join(' · ')}</div>
-    <div class="p-desc">${tool.desc}</div>
-    <div class="p-para">${tool.para}</div>
-    ${tool.url ? `<a class="p-link" href="${tool.url}" target="_blank">↗ Ver sitio</a>` : ''}
-    ${relatedTools.length ? `<div class="p-sec">Conectado con</div>${relatedTools.map(t=>`<div class="p-rel">${t.name}</div>`).join('')}` : ''}
-  `;
-  document.getElementById('map-panel').classList.add('open');
-}
-
-function closePanel() {
-  document.getElementById('map-panel').classList.remove('open');
-  document.querySelectorAll('.tool-chip').forEach(c => c.classList.remove('active','related','dimmed'));
-  activeChip = null;
-}
-document.getElementById('panel-close').addEventListener('click', closePanel);
 
 // ══════════════════════════════════
 // BUILD HISTORY
@@ -1323,11 +1264,4 @@ function buildGlosario() {
   const noRes = document.getElementById('g-no-results');
   const sorted = [...GLOSSARY].sort((a,b) => a.term.localeCompare(b.term));
   sorted.forEach((item, i) => {
-    const el = document.createElement('div');
-    el.className = 'glos-item reveal';
-    el.dataset.term = (item.term+' '+item.short+' '+item.full).toLowerCase();
-    el.innerHTML = `
-      <div class="g-num">${String(i+1).padStart(2,'0')}</div>
-      <div class="g-term">${item.term}</div>
-      <div class="g-short">${item.short}</div>
-      <div class=
+    const el = docum
