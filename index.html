@@ -132,8 +132,7 @@ nav {
 .uc-bar {
   display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
   padding: 20px 48px; border-bottom: 1px solid var(--border);
-  background: var(--surface); position: sticky;
-  top: var(--nav-h); z-index: 10;
+  background: var(--surface);
 }
 .uc-btn {
   font-family: var(--mono); font-size: 11px;
@@ -370,11 +369,10 @@ nav {
 
 <!-- HERRAMIENTAS -->
 <div id="herramientas" class="page active">
-  <div class="hero">
-    <div class="hero-num">01</div>
-    <div class="hero-label">Mapa de herramientas</div>
-    <h1 class="hero-title">Ecosistema<br><em>actual</em></h1>
-    <p class="hero-sub">Herramientas organizadas por caso de uso. Filtrá por categoría para explorar.</p>
+  <div style="padding: 80px 48px 32px; border-bottom: 1px solid var(--border);">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:12px;">Mapa de herramientas</div>
+    <h1 style="font-family:var(--serif);font-size:clamp(40px,6vw,80px);font-weight:700;line-height:.95;color:var(--ink);letter-spacing:-.02em;margin-bottom:20px;">Ecosistema <em style="font-style:italic;color:var(--ink-mid);">actual</em></h1>
+    <p style="font-size:15px;color:var(--ink-mid);max-width:480px;line-height:1.7;padding-left:16px;border-left:2px solid var(--green);">Herramientas organizadas por caso de uso. Filtrá por categoría para explorar.</p>
   </div>
   <div class="uc-wrap">
     <div class="uc-legend">
@@ -722,12 +720,4 @@ function filterGlos() {
     el.classList.toggle('hidden', !show);
     if (show) n++;
   });
-  document.getElementById('glos-none').style.display = n === 0 ? 'block' : 'none';
-  const total = document.querySelectorAll('.glos-item').length;
-  document.getElementById('glos-count').textContent = `${n} / ${total} términos`;
-}
-
-// ─── INIT ─────────────────────────────────────────────────
-async function init() {
-  // Mostrar datos locales de inmediato — no esperar a Supabase
-  buildHerramie
+  document.getElem
