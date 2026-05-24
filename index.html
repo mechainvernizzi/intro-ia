@@ -729,11 +729,9 @@ function filterGlos() {
 
 // ─── INIT ─────────────────────────────────────────────────
 async function init() {
-  // Herramientas
-  const tools = await sbFetch('usecase_tools') || FALLBACK_TOOLS;
-  buildHerramientas(tools);
+  // Mostrar datos locales de inmediato — no esperar a Supabase
+  buildHerramientas(FALLBACK_TOOLS);
+  buildHistoria(FALLBACK_HISTORIA);
+  buildGlosario(FALLBACK_GLOSARIO);
 
-  // Historia
-  const historia = await sbFetch('historia') || FALLBACK_HISTORIA;
-  buildHistoria(historia);
-
+  // Luego actualizar con datos de Supabase en b
