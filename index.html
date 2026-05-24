@@ -1,32 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introducción a la IA v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --paper: #f5f2ec;
+  --paper-dark: #ede9e0;
+  --ink: #1a1814;
+  --ink-mid: #6b6560;
+  --ink-dim: #b8b2a8;
+  --ink-faint: #ddd8d0;
+  --green: #00c48c;
+  --green-dim: rgba(0,196,140,0.1);
+  --blue: #0099ff;
+  --orange: #f97316;
+  --border: #d8d2c8;
+  --surface: #faf8f4;
+  --serif: 'Playfair Display', Georgia, serif;
+  --mono: 'Space Mono', monospace;
+  --body: 'Inter', sans-serif;
+  --nav-h: 52px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  background-image: radial-gradient(circle, #c8c0b0 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-attachment: fixed;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  background: rgba(245,242,236,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ink); display: flex; align-items: center; gap: 10px;
+}
+.nav-logo::before {
+  content: ''; display: inline-block;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.nav-links { display: flex; gap: 4px; }
+.nav-btn {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: .14em; text-transform: uppercase;
+  padding: 5px 16px; background: none;
+  border: 1px solid transparent; color: var(--ink-mid);
+  cursor: pointer; transition: all .2s;
+}
+.nav-btn:hover { color: var(--ink); border-color: var(--border); background: var(--paper-dark); }
+.nav-btn.active { color: var(--ink); border-color: var(--green); background: var(--green-dim); }
+
+/* ── PAGES ── */
+.page { display: none; min-height: 100vh; padding-top: var(--nav-h); }
+.page.active { display: block; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 60vh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 48px 48px 56px;
+  position: relative; overflow: hidden;
+}
+.hero-num {
+  position: absolute; right: 40px; top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--serif); font-size: clamp(160px,22vw,300px);
+  font-weight: 700; color: transparent;
+  -webkit-text-stroke: 1px var(--ink-faint);
+  user-select: none; pointer-events: none; line-height: 1;
+}
+.hero-label {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--green); margin-bottom: 20px;
+}
+.hero-title {
+  font-family: var(--serif); font-size: clamp(52px,8vw,110px);
+  font-weight: 700; line-height: .95; color: var(--ink);
+  margin-bottom: 24px; letter-spacing: -.02em;
+}
+.hero-title em { font-style: italic; color: var(--ink-mid); }
+.hero-sub {
+  font-size: 14px; color: var(--ink-mid); max-width: 440px;
+  line-height: 1.7; padding-left: 16px;
+  border-left: 2px solid var(--green);
+}
+
+/* ── LOADING ── */
+.loading {
+  padding: 80px 48px;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .15em; text-transform: uppercase;
+  color: var(--green); display: flex; align-items: center; gap: 12px;
+}
+.loading::before {
+  content: ''; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); animation: pulse 1s ease-in-out infinite;
+}
+
+/* ── HERRAMIENTAS ── */
+.uc-wrap { padding-bottom: 80px; }
+
+.uc-bar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  padding: 20px 48px; border-bottom: 1px solid var(--border);
+  background: var(--surface); position: sticky;
+  top: var(--nav-h); z-index: 10;
+}
+.uc-btn {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: 8px 18px; border: 1px solid var(--border);
+  background: transparent; color: var(--ink-mid);
+  cursor: pointer; transition: all .18s; white-space: nowrap;
+  line-height: 1.4;
+}
+.uc-btn:hover { color: var(--ink); border-color: var(--ink-dim); background: var(--paper-dark); }
+.uc-btn.on { background: var(--green-dim); color: var(--ink); border-color: var(--green); }
+
+.uc-legend {
+  display: flex; gap: 28px; flex-wrap: wrap;
+  padding: 16px 48px; border-bottom: 1px solid var(--border);
+}
+.uc-leg {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-mid); display: flex; align-items: center; gap: 8px;
+}
+.uc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+.uc-section { border-bottom: 1px solid var(--border); padding: 56px 48px 0; }
+.uc-section.hidden { display: none; }
+
+.uc-head { margin-bottom: 8px; }
+.uc-title {
+  font-family: var(--serif); font-size: clamp(28px,3.5vw,44px);
+  font-weight: 700; color: var(--ink); letter-spacing: -.01em;
+}
+.uc-desc {
+  font-size: 15px; color: var(--ink-mid); line-height: 1.7;
+  max-width: 640px; margin: 14px 0 20px;
+  padding-left: 16px; border-left: 2px solid var(--green);
+}
+.uc-io {
+  display: flex; gap: 28px; flex-wrap: wrap;
+  margin-bottom: 32px;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim);
+}
+.uc-io span { color: var(--green); font-weight: 700; margin-right: 8px; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1px; background: var(--border); margin-bottom: 48px;
+}
+.card {
+  background: var(--paper); padding: 26px 28px;
+  transition: background .15s; position: relative;
+}
+.card::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 2px;
+  background: transparent; transition: background .2s;
+}
+.card:hover { background: var(--surface); }
+.card:hover::before { background: var(--green); }
+.card-name {
+  font-family: var(--serif); font-size: 22px; font-weight: 700;
+  color: var(--ink); margin-bottom: 3px; letter-spacing: -.01em;
+}
+.card-maker {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-dim);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px;
+}
+.card-price {
+  display: inline-block; font-family: var(--mono); font-size: 10px;
+  letter-spacing: .08em; padding: 3px 10px;
+  border: 1px solid var(--green); color: var(--green);
+  margin-bottom: 12px; text-transform: uppercase;
+}
+.card-desc { font-size: 14px; color: var(--ink-mid); line-height: 1.65; }
+.card-note {
+  font-size: 12px; color: var(--ink-dim); line-height: 1.5;
+  padding: 8px 10px; background: var(--green-dim);
+  border-left: 2px solid var(--green); margin-top: 10px;
+}
+.card-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: .1em;
+  color: var(--blue); text-decoration: none;
+  text-transform: uppercase; margin-top: 10px; transition: gap .2s;
+}
+.card-link:hover { gap: 8px; }
+
+/* ── HISTORIA ── */
+.tl-wrap { padding: 48px 48px 80px; }
+.section-header {
+  display: flex; align-items: baseline; gap: 16px; margin-bottom: 40px;
+}
+.section-num {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--green); padding: 3px 8px;
+  border: 1px solid var(--green); background: var(--green-dim);
+}
+.section-title {
+  font-family: var(--serif); font-size: clamp(32px,5vw,60px);
+  font-weight: 700; color: var(--ink); letter-spacing: -.02em;
+}
+
+.tl-filters { display: flex; gap: 8px; margin-bottom: 40px; flex-wrap: wrap; }
+.tl-btn {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .13em;
+  text-transform: uppercase; padding: 5px 12px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--ink-mid);
+  cursor: pointer; transition: all .2s;
+}
+.tl-btn:hover { color: var(--ink); border-color: var(--ink-dim); }
+.tl-btn.on { background: var(--green-dim); color: var(--ink); border-color: var(--green); }
+
+.tl-entry {
+  display: grid; grid-template-columns: 120px 1px 1fr;
+  gap: 0 32px; padding: 28px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: opacity .3s;
+}
+.tl-entry.out { opacity: .08; pointer-events: none; }
+.tl-year {
+  font-family: var(--serif); font-size: 48px; font-weight: 700;
+  color: var(--ink); opacity: .12; transition: opacity .2s;
+  text-align: right; padding-top: 4px; letter-spacing: -.02em;
+}
+.tl-entry:hover .tl-year { opacity: .7; }
+.tl-line {
+  background: var(--border); width: 1px; position: relative;
+}
+.tl-line::before {
+  content: ''; position: absolute; top: 10px; left: -3px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--border); transition: all .2s;
+}
+.tl-entry:hover .tl-line::before {
+  background: var(--green); border-color: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+.tl-body { padding-top: 4px; transition: transform .2s; }
+.tl-entry:hover .tl-body { transform: translateX(4px); }
+.tl-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .13em;
+  text-transform: uppercase; margin-bottom: 8px; display: inline-block;
+  padding: 2px 7px; border: 1px solid;
+}
+.tl-title {
+  font-family: var(--serif); font-size: clamp(22px,2.5vw,36px);
+  font-weight: 700; color: var(--ink); line-height: 1.1; margin-bottom: 10px;
+}
+.tl-short { font-size: 15px; color: var(--ink-mid); line-height: 1.7; max-width: 560px; }
+.tl-full {
+  display: none; margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--border); max-width: 540px;
+}
+.tl-entry.open .tl-full { display: block; }
+.tl-full-text { font-size: 13px; color: var(--ink-mid); line-height: 1.8; margin-bottom: 12px; }
+.tl-person {
+  background: var(--surface); border-left: 2px solid var(--green);
+  padding: 12px 16px; margin-top: 12px;
+}
+.tl-person-name {
+  font-family: var(--serif); font-size: 16px; font-weight: 600;
+  color: var(--ink); margin-bottom: 4px;
+}
+.tl-person-bio { font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
+.tl-more {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .1em;
+  color: var(--blue); text-transform: uppercase; margin-top: 8px; display: inline-block;
+}
+
+/* ── GLOSARIO ── */
+.glos-wrap { padding: 48px 48px 80px; }
+.glos-bar {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 14px;
+}
+.glos-input {
+  font-family: var(--mono); font-size: 13px;
+  background: transparent; border: none; color: var(--ink);
+  outline: none; flex: 1; max-width: 440px; padding: 6px 0;
+}
+.glos-input::placeholder { color: var(--ink-dim); }
+.glos-count {
+  font-family: var(--mono); font-size: 10px; color: var(--ink-dim);
+  letter-spacing: .1em; text-transform: uppercase; margin-left: auto;
+}
+.glos-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px; background: var(--border);
+}
+.glos-item {
+  background: var(--paper); padding: 20px 22px;
+  position: relative; transition: background .15s;
+}
+.glos-item::before {
+  content: ''; position: absolute;
+  left: 0; top: 0; bottom: 0; width: 2px;
+  background: transparent; transition: background .2s;
+}
+.glos-item:hover { background: var(--surface); }
+.glos-item:hover::before { background: var(--green); }
+.glos-item.hidden { display: none; }
+.glos-num {
+  font-family: var(--mono); font-size: 9px; color: var(--green);
+  letter-spacing: .1em; margin-bottom: 7px;
+}
+.glos-term {
+  font-family: var(--serif); font-size: 24px; font-weight: 700;
+  color: var(--ink); line-height: 1.1; margin-bottom: 8px; letter-spacing: -.01em;
+}
+.glos-short { font-size: 14px; color: var(--ink-mid); line-height: 1.65; }
+.glos-full {
+  font-size: 13px; color: var(--ink-mid); line-height: 1.75;
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+}
+.glos-none {
+  grid-column: 1/-1; padding: 64px 0; text-align: center;
+  color: var(--ink-dim); font-family: var(--mono); font-size: 11px;
+  letter-spacing: .1em; display: none;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Introducción a la IA</div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="showPage('herramientas')">Herramientas</button>
+    <button class="nav-btn" onclick="showPage('historia')">Historia</button>
+    <button class="nav-btn" onclick="showPage('glosario')">Glosario</button>
+  </div>
+</nav>
+
+<!-- HERRAMIENTAS -->
+<div id="herramientas" class="page active">
+  <div class="hero">
+    <div class="hero-num">01</div>
+    <div class="hero-label">Mapa de herramientas</div>
+    <h1 class="hero-title">Ecosistema<br><em>actual</em></h1>
+    <p class="hero-sub">Herramientas organizadas por caso de uso. Filtrá por categoría para explorar.</p>
+  </div>
+  <div class="uc-wrap">
+    <div class="uc-legend">
+      <div class="uc-leg"><div class="uc-dot" style="background:var(--green)"></div>Open source / Gratuito</div>
+      <div class="uc-leg"><div class="uc-dot" style="background:var(--blue)"></div>Privado / Freemium</div>
+      <div class="uc-leg"><div class="uc-dot" style="background:var(--orange)"></div>De pago</div>
+    </div>
+    <div class="uc-bar" id="uc-bar"></div>
+    <div id="uc-sections"></div>
+  </div>
+</div>
+
+<!-- HISTORIA -->
+<div id="historia" class="page">
+  <div class="hero">
+    <div class="hero-num">02</div>
+    <div class="hero-label">Historia y origen</div>
+    <h1 class="hero-title">Línea de<br><em>tiempo</em></h1>
+    <p class="hero-sub">Hitos técnicos y culturales. Hacé clic en cada entrada para expandir.</p>
+  </div>
+  <div class="tl-wrap">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div class="section-title">Historia</div>
+    </div>
+    <div class="tl-filters" id="tl-filters"></div>
+    <div id="tl-entries"></div>
+  </div>
+</div>
+
+<!-- GLOSARIO -->
+<div id="glosario" class="page">
+  <div class="hero">
+    <div class="hero-num">03</div>
+    <div class="hero-label">Referencia</div>
+    <h1 class="hero-title">Glosario<br><em>de términos</em></h1>
+    <p class="hero-sub">Definiciones del ecosistema. Buscá cualquier término.</p>
+  </div>
+  <div class="glos-wrap">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div class="section-title">Glosario</div>
+    </div>
+    <div class="glos-bar">
+      <input class="glos-input" type="text" placeholder="Buscar término..." id="glos-search" oninput="filterGlos()">
+      <div class="glos-count" id="glos-count"></div>
+    </div>
+    <div class="glos-grid" id="glos-grid">
+      <div class="glos-none" id="glos-none">Sin resultados</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+const SB_URL = 'https://iykkvndbzlzimgqdszos.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5a2t2bmRiemx6aW1ncWRzem9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1OTA2NzgsImV4cCI6MjA5NTE2NjY3OH0.ZxKBbEyiSJ8SpIclvKF4TgHeOYgD-7MUK3_2ndFFF3A';
+
 async function sbFetch(table) {
   try {
     const r = await fetch(`${SB_URL}/rest/v1/${table}?select=*&limit=500&order=id`, {
-      headers: {
-        apikey: SB_KEY,
-        Authorization: `Bearer ${SB_KEY}`
-      },
+      headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` },
       cache: 'no-store'
     });
-
-    if (!r.ok) {
-      const errorText = await r.text();
-      console.error('Supabase error:', {
-        table,
-        status: r.status,
-        statusText: r.statusText,
-        error: errorText
-      });
-      return null;
-    }
-
+    if (!r.ok) return null;
     const d = await r.json();
-
-    console.log(`Supabase loaded: ${table}`, d);
-
     return Array.isArray(d) && d.length ? d : null;
-
   } catch(e) {
-    console.error('sbFetch failed:', table, e);
+    console.warn('sbFetch failed:', table, e);
     return null;
   }
 }
+
+// ─── NAV ──────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.textContent.toLowerCase().trim() === id) b.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+
+// ─── HERRAMIENTAS ─────────────────────────────────────────
+const FALLBACK_TOOLS = [
+  {usecase_id:'productividad',usecase_title:'Productividad y asistencia general',usecase_desc:'Modelos de uso cotidiano para escritura, resumen, brainstorming y asistencia en tareas diversas.',usecase_input:'Texto, Voz, Imágenes, Archivos',usecase_output:'Texto, Código, Imágenes, Voz',name:'ChatGPT',maker:'OpenAI',price:'Freemium ($20/mes)',access:'private',descripcion:'El modelo más extendido. Incluye generación de imágenes, ejecución de código, navegación web y GPTs personalizados.',note:'',url:'https://chatgpt.com'},
+  {usecase_id:'productividad',usecase_title:'Productividad y asistencia general',usecase_desc:'Modelos de uso cotidiano para escritura, resumen, brainstorming y asistencia en tareas diversas.',usecase_input:'Texto, Voz, Imágenes, Archivos',usecase_output:'Texto, Código, Imágenes, Voz',name:'Ernie Bot',maker:'Baidu',price:'Freemium (Planes corporativos)',access:'private',descripcion:'Principal asistente de IA de Baidu. Profunda integración con el ecosistema chino.',note:'Disponible principalmente en China. Puede requerir VPN fuera del país.',url:'https://yiyan.baidu.com/'},
+  {usecase_id:'multimodalidad',usecase_title:'Multimodalidad y ecosistema de datos',usecase_desc:'Modelos que procesan y combinan múltiples tipos de input.',usecase_input:'Texto, Imágenes, Audio, Video, Código',usecase_output:'Texto, Código, Imágenes, Audio',name:'Gemini',maker:'Google',price:'Freemium ($20/mes)',access:'private',descripcion:'Integrado con Drive, Docs y Gmail. Acceso a información en tiempo real.',note:'',url:'https://gemini.google.com'},
+  {usecase_id:'multimodalidad',usecase_title:'Multimodalidad y ecosistema de datos',usecase_desc:'Modelos que procesan y combinan múltiples tipos de input.',usecase_input:'Texto, Imágenes, Audio, Video, Código',usecase_output:'Texto, Código, Imágenes, Audio',name:'Qwen / Tongyi',maker:'Alibaba',price:'Freemium (Opciones Open source)',access:'open',descripcion:'Modelo multimodal con versiones open source. Muy bueno en código y razonamiento matemático.',note:'Versiones open source descargables en Hugging Face.',url:'https://qwenlm.github.io'},
+  {usecase_id:'razonamiento',usecase_title:'Razonamiento complejo y lógica',usecase_desc:'Modelos especializados en tareas que requieren razonamiento profundo y precisión.',usecase_input:'Texto, Código, Archivos masivos',usecase_output:'Texto, Código de alta precisión, Lógica',name:'Claude',maker:'Anthropic',price:'Freemium ($20/mes)',access:'private',descripcion:'Especialmente bueno en textos largos y razonamiento. 200.000 tokens de contexto.',note:'',url:'https://claude.ai'},
+  {usecase_id:'razonamiento',usecase_title:'Razonamiento complejo y lógica',usecase_desc:'Modelos especializados en tareas que requieren razonamiento profundo y precisión.',usecase_input:'Texto, Código, Archivos masivos',usecase_output:'Texto, Código de alta precisión, Lógica',name:'DeepSeek',maker:'DeepSeek',price:'Freemium (API económica)',access:'open',descripcion:'Modelo chino de alto rendimiento. Sorprendente relación calidad/costo.',note:'Empresa china. Disponible globalmente.',url:'https://www.deepseek.com'},
+  {usecase_id:'busqueda',usecase_title:'Búsqueda e investigación con fuentes',usecase_desc:'Modelos orientados a la búsqueda verificada con citas y fuentes.',usecase_input:'Texto, Enlaces, Documentos',usecase_output:'Texto estructurado con citas de fuentes',name:'Perplexity AI',maker:'Perplexity',price:'Freemium ($20/mes)',access:'private',descripcion:'Motor de búsqueda con IA. Responde con fuentes verificables y citadas.',note:'',url:'https://www.perplexity.ai'},
+  {usecase_id:'busqueda',usecase_title:'Búsqueda e investigación con fuentes',usecase_desc:'Modelos orientados a la búsqueda verificada con citas y fuentes.',usecase_input:'Texto, Enlaces, Documentos',usecase_output:'Texto estructurado con citas de fuentes',name:'Tencent Yuanbao',maker:'Tencent',price:'Gratis (Ecosistema WeChat)',access:'open',descripcion:'Asistente IA de Tencent integrado en el ecosistema WeChat.',note:'Disponible principalmente en China a través de WeChat.',url:'https://hunyuan.tencent.com'},
+  {usecase_id:'documentos',usecase_title:'Análisis de documentos de gran extensión',usecase_desc:'Herramientas para procesar y analizar documentos masivos y PDFs.',usecase_input:'Documentos masivos, PDFs, Enlaces',usecase_output:'Resúmenes, Respuestas analíticas, Audio',name:'NotebookLM',maker:'Google',price:'Gratis',access:'open',descripcion:'Cargá documentos propios y hacé preguntas sobre ellos. Genera resúmenes en audio.',note:'',url:'https://notebooklm.google'},
+  {usecase_id:'documentos',usecase_title:'Análisis de documentos de gran extensión',usecase_desc:'Herramientas para procesar y analizar documentos masivos y PDFs.',usecase_input:'Documentos masivos, PDFs, Enlaces',usecase_output:'Resúmenes, Respuestas analíticas, Audio',name:'Kimi',maker:'Moonshot AI',price:'Freemium (Gran ventana gratuita)',access:'private',descripcion:'Ventana de contexto muy grande de manera gratuita.',note:'Empresa china con presencia internacional.',url:'https://www.kimi.com'},
+  {usecase_id:'voz',usecase_title:'Interacción por voz e integración móvil',usecase_desc:'Modelos con capacidades de voz en tiempo real y optimizados para uso móvil.',usecase_input:'Voz en tiempo real, Texto',usecase_output:'Respuestas de voz hipernaturales',name:'ChatGPT Voice',maker:'OpenAI',price:'Freemium (Integrado en Plus)',access:'private',descripcion:'Conversación de voz en tiempo real con detección de emociones y tono.',note:'',url:'https://chatgpt.com'},
+  {usecase_id:'voz',usecase_title:'Interacción por voz e integración móvil',usecase_desc:'Modelos con capacidades de voz en tiempo real y optimizados para uso móvil.',usecase_input:'Voz en tiempo real, Texto',usecase_output:'Respuestas de voz hipernaturales',name:'Doubao',maker:'ByteDance',price:'Gratis (Ecosistema TikTok)',access:'open',descripcion:'Asistente de voz de ByteDance. Muy popular en China.',note:'Disponible principalmente en China.',url:'https://www.doubao.com'},
+  {usecase_id:'video',usecase_title:'Generación de video',usecase_desc:'Modelos para generar video de alta calidad desde texto e imágenes.',usecase_input:'Texto, Imágenes base, Ajustes de cámara',usecase_output:'Video HD con simulación física',name:'Runway Gen-3',maker:'Runway',price:'De pago',access:'paid',descripcion:'El más usado en producción audiovisual profesional. Control fino sobre movimiento.',note:'',url:'https://runwayml.com'},
+  {usecase_id:'video',usecase_title:'Generación de video',usecase_desc:'Modelos para generar video de alta calidad desde texto e imágenes.',usecase_input:'Texto, Imágenes base, Ajustes de cámara',usecase_output:'Video HD con simulación física',name:'Kling AI',maker:'Kuaishou',price:'Freemium (Créditos diarios gratis)',access:'private',descripcion:'Alta calidad a menor costo que competidores occidentales.',note:'Empresa china (Kuaishou). Disponible globalmente.',url:'https://kling.ai'},
+  {usecase_id:'video',usecase_title:'Generación de video',usecase_desc:'Modelos para generar video de alta calidad desde texto e imágenes.',usecase_input:'Texto, Imágenes base, Ajustes de cámara',usecase_output:'Video HD con simulación física',name:'Seedream',maker:'ByteDance',price:'Freemium',access:'private',descripcion:'Modelo de generación de video de ByteDance. Alta calidad en simulación física.',note:'Accesible vía plataformas como Artlist. Verificar disponibilidad.',url:'https://kling.ai'},
+  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'Midjourney',maker:'Midjourney Inc.',price:'De pago (Desde $10/mes)',access:'paid',descripcion:'El estándar de calidad estética. Muy usado en diseño y producción visual profesional.',note:'',url:'https://www.midjourney.com'},
+  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'Stable Diffusion',maker:'Stability AI',price:'Open source (Gratis)',access:'open',descripcion:'Modelo texto-a-imagen open source. Base del ecosistema de imagen generativa.',note:'',url:'https://stability.ai'},
+  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'DALL-E 3',maker:'OpenAI',price:'Incluido en ChatGPT Plus',access:'private',descripcion:'Integrado en ChatGPT. Muy bueno con instrucciones complejas y texto en imágenes.',note:'',url:'https://openai.com/dall-e-3'},
+  {usecase_id:'imagen',usecase_title:'Generación de imágenes',usecase_desc:'Modelos para generar imágenes de alta calidad desde texto y prompts visuales.',usecase_input:'Texto (Prompts), Imágenes',usecase_output:'Imágenes de Alta Calidad y Concept Art',name:'Adobe Firefly',maker:'Adobe',price:'Incluido en Creative Cloud',access:'paid',descripcion:'Integrado en Photoshop e Illustrator. Entrenado con imágenes con licencia.',note:'',url:'https://firefly.adobe.com'},
+];
+
+const FALLBACK_HISTORIA = [
+  {year:'1936',title:'On Computable Numbers',cat:'tecnico',short:'Alan Turing sienta las bases matemáticas de la computación.',full_text:'Turing publica "On Computable Numbers". Propone la máquina abstracta que llevará su nombre.',person_name:'Alan Turing (1912–1954)',person_bio:'Matemático británico, padre de la informática teórica. Descifró los códigos Enigma.'},
+  {year:'1943',title:'McCulloch & Pitts',cat:'tecnico',short:'Primer modelo matemático de neurona artificial.',full_text:'Proponen que el cerebro puede describirse como un sistema de cómputo lógico. Origen conceptual de las redes neuronales.',person_name:'Warren McCulloch (1898–1969)',person_bio:'Neurólogo y cibernético. Sentó las bases conceptuales de las redes neuronales.'},
+  {year:'1943',title:'Conferencias Macy',cat:'cultural',short:'Se forja el pensamiento cibernético.',full_text:'Reuniones interdisciplinarias en Nueva York (1946–1953) que reunieron matemáticos, neurocientíficos, antropólogos y psicólogos.',person_name:'',person_bio:''},
+  {year:'1950',title:'Test de Turing',cat:'tecnico',short:'Primer marco para preguntar si una máquina puede pensar.',full_text:'Turing publica "Computing Machinery and Intelligence". Propone el Test de Turing como criterio de inteligencia.',person_name:'Alan Turing (1912–1954)',person_bio:'Matemático británico, padre de la informática teórica.'},
+  {year:'1956',title:'Conferencia de Dartmouth',cat:'tecnico',short:'Nace el término "Inteligencia Artificial".',full_text:'John McCarthy, Marvin Minsky y otros acuñan el término "Inteligencia Artificial". Nace el campo como disciplina formal.',person_name:'John McCarthy (1927–2011)',person_bio:'Acuñó el término "Inteligencia Artificial" y creó el lenguaje LISP.'},
+  {year:'1958',title:'Perceptron',cat:'tecnico',short:'Frank Rosenblatt presenta la primera red neuronal que aprende.',full_text:'El Perceptron es la primera red neuronal artificial capaz de aprender por experiencia.',person_name:'Frank Rosenblatt (1928–1971)',person_bio:'Psicólogo y neurólogo. Su trabajo fue fundamental para el desarrollo del campo.'},
+  {year:'1966',title:'ELIZA',cat:'cultural',short:'Primer chatbot. Revela la tendencia humana a antropomorfizar.',full_text:'Joseph Weizenbaum desarrolla ELIZA en el MIT. Simulaba un psicoterapeuta con reglas simples.',person_name:'Joseph Weizenbaum (1923–2008)',person_bio:'"Computer Power and Human Reason" (1976) sigue siendo una referencia ética fundamental.'},
+  {year:'1974',title:'Primer invierno de la IA',cat:'critico',short:'El optimismo inicial colapsa. Corte de financiamiento.',full_text:'Las promesas de Dartmouth no se cumplen. Hardware insuficiente, algoritmos que no escalan.',person_name:'',person_bio:''},
+  {year:'1987',title:'Segundo invierno',cat:'critico',short:'Los sistemas expertos colapsan ante sus propias limitaciones.',full_text:'Los sistemas expertos son frágiles, caros de mantener y no aprenden. El deshielo llegará cuando converjan: algoritmos + datos masivos + GPUs.',person_name:'',person_bio:''},
+  {year:'1989',title:'Redes CNN',cat:'tecnico',short:'Yann LeCun desarrolla las primeras redes convolucionales.',full_text:'LeCun desarrolla LeNet-5. Primera aplicación práctica del Deep Learning.',person_name:'Yann LeCun (1960)',person_bio:'Científico francés, Director de IA en Meta. Premio Turing 2018.'},
+  {year:'1997',title:'Deep Blue vence a Kasparov',cat:'cultural',short:'La IA supera al humano en ajedrez por primera vez.',full_text:'Deep Blue (IBM) vence al campeón mundial. Hito cultural: primera vez que una máquina supera al mejor humano en un dominio cognitivo complejo.',person_name:'Garry Kasparov (1963)',person_bio:'Considerado el mejor ajedrecista de la historia.'},
+  {year:'2006',title:'Hinton relanza el Deep Learning',cat:'tecnico',short:'Inicio de la era moderna del Deep Learning.',full_text:'Geoffrey Hinton publica trabajos fundamentales que relanzan el interés en redes neuronales profundas.',person_name:'Geoffrey Hinton (1947)',person_bio:'"Padrino del Deep Learning". Premio Turing 2018.'},
+  {year:'2009',title:'ImageNet',cat:'tecnico',short:'El dataset que cambiaría la visión por computadora.',full_text:'Lanzamiento de ImageNet. Su competencia anual será el escenario donde el Deep Learning demostrará su superioridad en 2012.',person_name:'',person_bio:''},
+  {year:'2012',title:'AlexNet',cat:'tecnico',short:'Punto de inflexión definitivo del Deep Learning.',full_text:'AlexNet gana ImageNet con diferencia histórica usando GPUs. El error de clasificación cae a la mitad.',person_name:'',person_bio:''},
+  {year:'2014',title:'GANs',cat:'tecnico',short:'Primera arquitectura capaz de generar imágenes fotorrealistas.',full_text:'Ian Goodfellow propone las Redes Generativas Adversariales. Generador vs Discriminador.',person_name:'Ian Goodfellow (1985)',person_bio:'Una de las contribuciones más importantes de la última década en IA.'},
+  {year:'2016',title:'AlphaGo',cat:'cultural',short:'La IA vence al campeón mundial de Go.',full_text:'AlphaGo (DeepMind) vence a Lee Sedol. El Go era considerado irreducible al cómputo.',person_name:'Lee Sedol (1983)',person_bio:'Se retiró del Go profesional en 2019: "Hay un ser que no puede ser derrotado."'},
+  {year:'2017',title:'Transformers',cat:'tecnico',short:'"Attention is All You Need" — base de toda la IA moderna.',full_text:'Google introduce los Transformers. Analiza todas las palabras simultáneamente. Base de GPT, Claude, Gemini, Stable Diffusion, Flux.',person_name:'',person_bio:''},
+  {year:'2021',title:'CLIP + DALL-E',cat:'tecnico',short:'Texto e imagen se conectan en un espacio compartido.',full_text:'OpenAI presenta CLIP y DALL-E. Puente conceptual que hizo posibles los modelos texto-a-imagen.',person_name:'',person_bio:''},
+  {year:'2022',title:'SD + ChatGPT',cat:'cultural',short:'La IA generativa llega al público general.',full_text:'Stable Diffusion se publica como código abierto. ChatGPT alcanza 100 millones de usuarios en dos meses.',person_name:'',person_bio:''},
+  {year:'2024',title:'Flux + AI Act',cat:'critico',short:'Nuevo estándar open source. Primer marco regulatorio.',full_text:'Black Forest Labs publica Flux. La UE aprueba el AI Act. Proliferación de deepfakes políticos.',person_name:'',person_bio:''},
+  {year:'2025',title:'IA como infraestructura',cat:'cultural',short:'Video desde texto. IA generativa cotidiana.',full_text:'Sora y modelos open source democratizan el video. La IA generativa se convierte en infraestructura cultural.',person_name:'',person_bio:''},
+];
+
+const FALLBACK_GLOSARIO = [
+  {term:'Algoritmo',short:'Serie de instrucciones para realizar cálculos u operaciones.',full_text:'Base de cualquier programa o modelo computacional.'},
+  {term:'Alucinación',short:'Cuando la IA genera información falsa con apariencia de verdad.',full_text:'Característica estructural de los LLMs. Siempre verificar datos críticos.'},
+  {term:'CFG Scale',short:'Controla qué tan estrictamente el modelo sigue el prompt.',full_text:'Valores 6-9: equilibrio recomendado. Por encima de 12 la imagen puede saturarse.'},
+  {term:'Checkpoint',short:'Archivo con todos los pesos de un modelo entrenado.',full_text:'Es el modelo completo. Extensiones: .safetensors o .ckpt. Puede pesar entre 2GB y 20GB.'},
+  {term:'CLIP',short:'Modelo que conecta texto e imagen en un espacio matemático compartido.',full_text:'Contrastive Language-Image Pretraining, OpenAI 2021. No genera imágenes: da al modelo la coordenada semántica del texto dentro del universo visual.'},
+  {term:'CNN',short:'Red neuronal especializada en procesamiento de imágenes.',full_text:'Red Neuronal Convolucional. Capas tempranas: bordes. Capas medias: formas. Capas profundas: conceptos como "rostro" o "árbol".'},
+  {term:'Cosmotécnica',short:'Concepto de Yuk Hui: la técnica como expresión de una cosmología cultural.',full_text:'No existe una tecnología universal. Cada cultura tiene su propia relación con la técnica.'},
+  {term:'Dataset',short:'Conjunto de datos para entrenar o evaluar un modelo.',full_text:'Su calidad y diversidad determinan las capacidades y sesgos del modelo.'},
+  {term:'Deep Learning',short:'Aprendizaje profundo con redes neuronales de muchas capas.',full_text:'Subcampo del Machine Learning. Las capas profundas permiten representaciones complejas.'},
+  {term:'Embedding',short:'Representación numérica de un concepto en el espacio latente.',full_text:'Traducción del lenguaje a números. Conceptos similares tienen embeddings cercanos.'},
+  {term:'Espacio latente',short:'Mapa matemático donde el modelo representa datos de forma comprimida.',full_text:'No trabaja con píxeles sino con vectores. Puntos cercanos = conceptos relacionados.'},
+  {term:'Fine-tuning',short:'Continuar el entrenamiento de un modelo con datos específicos.',full_text:'Permite especializar el modelo sin entrenar desde cero. Base de LoRA y DreamBooth.'},
+  {term:'Flux',short:'Modelo de generación de imágenes de nueva generación, open source.',full_text:'Desarrollado por Black Forest Labs. Estándar actual del ecosistema open source.'},
+  {term:'GAN',short:'Dos redes que compiten para generar imágenes fotorrealistas.',full_text:'Generador vs Discriminador (Goodfellow, 2014). Primera arquitectura en generar imágenes fotorrealistas.'},
+  {term:'GPU',short:'Hardware especializado para entrenamiento e inferencia de IA.',full_text:'Ejecuta miles de operaciones en paralelo. Sin GPUs NVIDIA, los modelos actuales serían inviables.'},
+  {term:'IA Generativa',short:'IA especializada en crear contenido original: texto, imagen, audio, video.',full_text:'Aprende patrones estadísticos de grandes volúmenes de datos para generar contenido nuevo.'},
+  {term:'Inpaint',short:'Regenerar una región específica de una imagen con un prompt.',full_text:'Se selecciona el área con una máscara y el modelo completa esa zona de manera coherente.'},
+  {term:'LLM',short:'Modelo de lenguaje de gran tamaño basado en Transformers.',full_text:'Aprende relaciones estadísticas entre tokens. No "sabe": ha aprendido qué secuencias son probables.'},
+  {term:'LoRA',short:'Archivos ligeros que añaden estilos o conceptos al modelo base.',full_text:'Low-Rank Adaptation. 50-200MB vs GB de un checkpoint. Combinables sin modificar el modelo original.'},
+  {term:'Modelo de difusión',short:'Arquitectura que aprende a revertir un proceso de agregado de ruido.',full_text:'Entrenamiento: se agrega ruido. Generación: el modelo parte de ruido y lo elimina guiado por el prompt.'},
+  {term:'Prompt',short:'Instrucción en lenguaje natural que guía la generación.',full_text:'El orden importa: los primeros elementos tienen más peso.'},
+  {term:'RAG',short:'Conecta el LLM con fuentes externas para reducir alucinaciones.',full_text:'Generación Aumentada por Recuperación. Antes de responder, busca información en una base confiable.'},
+  {term:'Sampler',short:'Algoritmo que guía el proceso de difusión inversa.',full_text:'Euler A: rápido. DPM++ 2M Karras: detallado. DDIM: ideal para video.'},
+  {term:'Seed',short:'Número inicial del generador aleatorio.',full_text:'Fijar un valor permite reproducir exactamente el mismo resultado.'},
+  {term:'Sesgo',short:'Tendencia a resultados parciales por los datos de entrenamiento.',full_text:'Los modelos reproducen y amplifican sesgos de sus datos de entrenamiento.'},
+  {term:'Token',short:'Unidad mínima de texto que procesa el modelo.',full_text:'GPT-4: 128.000 tokens de contexto. Claude: 200.000. Las APIs se cobran por tokens.'},
+  {term:'Transformer',short:'Arquitectura base de todos los grandes modelos modernos.',full_text:'Google, 2017. Analiza todas las palabras simultáneamente con mecanismos de atención.'},
+  {term:'VAE',short:'Traduce entre el espacio de píxeles y el espacio latente.',full_text:'Variational Autoencoder. Encoder: comprime. Decoder: traduce a píxeles visibles.'},
+];
+
+// ─── BUILD HERRAMIENTAS ───────────────────────────────────
+function buildHerramientas(data) {
+  const bar = document.getElementById('uc-bar');
+  const sections = document.getElementById('uc-sections');
+  bar.innerHTML = ''; sections.innerHTML = '';
+
+  // Group by usecase
+  const groups = {};
+  data.forEach(r => {
+    if (!groups[r.usecase_id]) {
+      groups[r.usecase_id] = {
+        id: r.usecase_id,
+        title: r.usecase_title,
+        desc: r.usecase_desc,
+        input: r.usecase_input,
+        output: r.usecase_output,
+        tools: []
+      };
+    }
+    groups[r.usecase_id].tools.push(r);
+  });
+
+  const ucList = Object.values(groups);
+
+  // All button
+  const allBtn = document.createElement('button');
+  allBtn.className = 'uc-btn on';
+  allBtn.textContent = 'Todos';
+  allBtn.onclick = () => {
+    document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
+    allBtn.classList.add('on');
+    document.querySelectorAll('.uc-section').forEach(s => s.classList.remove('hidden'));
+  };
+  bar.appendChild(allBtn);
+
+  ucList.forEach(uc => {
+    // Filter btn
+    const btn = document.createElement('button');
+    btn.className = 'uc-btn';
+    btn.textContent = uc.title;
+    btn.onclick = () => {
+      document.querySelectorAll('.uc-btn').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      document.querySelectorAll('.uc-section').forEach(s => {
+        s.classList.toggle('hidden', s.dataset.id !== uc.id);
+      });
+    };
+    bar.appendChild(btn);
+
+    // Section
+    const sec = document.createElement('div');
+    sec.className = 'uc-section';
+    sec.dataset.id = uc.id;
+    sec.innerHTML = `
+      <div class="uc-head"><div class="uc-title">${uc.title}</div></div>
+      <div class="uc-desc">${uc.desc}</div>
+      <div class="uc-io">
+        <div><span>INPUT</span>${uc.input}</div>
+        <div><span>OUTPUT</span>${uc.output}</div>
+      </div>
+      <div class="cards" id="cards-${uc.id}"></div>
+    `;
+    sections.appendChild(sec);
+
+    const cardsEl = sec.querySelector(`#cards-${uc.id}`);
+    uc.tools.forEach(t => {
+      const dotColor = t.access === 'open' ? 'var(--green)' : t.access === 'paid' ? 'var(--orange)' : 'var(--blue)';
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+          <div style="width:10px;height:10px;border-radius:50%;background:${dotColor};flex-shrink:0;box-shadow:0 0 6px ${dotColor}44"></div>
+          <div class="card-name">${t.name}</div>
+        </div>
+        <div class="card-maker">${t.maker}</div>
+        <div class="card-price">${t.price}</div>
+        <div class="card-desc">${t.descripcion || ''}</div>
+        ${t.note ? `<div class="card-note">⚠ ${t.note}</div>` : ''}
+        ${t.url ? `<a class="card-link" href="${t.url}" target="_blank">↗ Ver sitio</a>` : ''}
+      `;
+      cardsEl.appendChild(card);
+    });
+  });
+}
+
+// ─── BUILD HISTORIA ───────────────────────────────────────
+const TL_CATS = {
+  tecnico:  { label: 'Técnico',  color: '#00aaff' },
+  cultural: { label: 'Cultural', color: '#c8ff00' },
+  critico:  { label: 'Crítico',  color: '#ff4466' },
+};
+let activeCats = new Set(['tecnico','cultural','critico']);
+
+function buildHistoria(data) {
+  const filtersEl = document.getElementById('tl-filters');
+  const entriesEl = document.getElementById('tl-entries');
+  filtersEl.innerHTML = ''; entriesEl.innerHTML = '';
+
+  // All btn
+  const allBtn = document.createElement('button');
+  allBtn.className = 'tl-btn on';
+  allBtn.textContent = 'Todos';
+  allBtn.onclick = () => {
+    activeCats = new Set(['tecnico','cultural','critico']);
+    filtersEl.querySelectorAll('.tl-btn').forEach(b => b.classList.add('on'));
+    updateTL();
+  };
+  filtersEl.appendChild(allBtn);
+
+  Object.entries(TL_CATS).forEach(([key, cat]) => {
+    const btn = document.createElement('button');
+    btn.className = 'tl-btn on';
+    btn.textContent = cat.label;
+    btn.onclick = () => {
+      if (activeCats.has(key)) { activeCats.delete(key); btn.classList.remove('on'); }
+      else { activeCats.add(key); btn.classList.add('on'); }
+      updateTL();
+    };
+    filtersEl.appendChild(btn);
+  });
+
+  data.forEach(item => {
+    const cat = TL_CATS[item.cat] || TL_CATS.tecnico;
+    const entry = document.createElement('div');
+    entry.className = 'tl-entry';
+    entry.dataset.cat = item.cat;
+    entry.innerHTML = `
+      <div class="tl-year">${item.year}</div>
+      <div class="tl-line"></div>
+      <div class="tl-body">
+        <span class="tl-tag" style="background:${cat.color}18;color:${cat.color};border-color:${cat.color}44">${cat.label}</span>
+        <div class="tl-title">${item.title}</div>
+        <div class="tl-short">${item.short}</div>
+        <div class="tl-full">
+          <div class="tl-full-text">${item.full_text}</div>
+          ${item.person_name ? `<div class="tl-person"><div class="tl-person-name">${item.person_name}</div><div class="tl-person-bio">${item.person_bio}</div></div>` : ''}
+        </div>
+        <span class="tl-more">+ expandir</span>
+      </div>
+    `;
+    entry.onclick = () => {
+      entry.classList.toggle('open');
+      entry.querySelector('.tl-more').textContent =
+        entry.classList.contains('open') ? '− cerrar' : '+ expandir';
+    };
+    entriesEl.appendChild(entry);
+  });
+}
+
+function updateTL() {
+  document.querySelectorAll('.tl-entry').forEach(e => {
+    e.classList.toggle('out', !activeCats.has(e.dataset.cat));
+  });
+}
+
+// ─── BUILD GLOSARIO ───────────────────────────────────────
+function buildGlosario(data) {
+  const grid = document.getElementById('glos-grid');
+  const none = document.getElementById('glos-none');
+  const sorted = [...data].sort((a, b) => a.term.localeCompare(b.term, 'es'));
+
+  sorted.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'glos-item';
+    el.dataset.search = (item.term + ' ' + item.short + ' ' + (item.full_text || '')).toLowerCase();
+    el.innerHTML = `
+      <div class="glos-num">${String(i + 1).padStart(2, '0')}</div>
+      <div class="glos-term">${item.term}</div>
+      <div class="glos-short">${item.short}</div>
+      ${item.full_text ? `<div class="glos-full">${item.full_text}</div>` : ''}
+    `;
+    grid.insertBefore(el, none);
+  });
+
+  document.getElementById('glos-count').textContent = `${sorted.length} / ${sorted.length} términos`;
+}
+
+function filterGlos() {
+  const q = document.getElementById('glos-search').value.toLowerCase().trim();
+  let n = 0;
+  document.querySelectorAll('.glos-item').forEach(el => {
+    const show = !q || el.dataset.search.includes(q);
+    el.classList.toggle('hidden', !show);
+    if (show) n++;
+  });
+  document.getElementById('glos-none').style.display = n === 0 ? 'block' : 'none';
+  const total = document.querySelectorAll('.glos-item').length;
+  document.getElementById('glos-count').textContent = `${n} / ${total} términos`;
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+async function init() {
+  // Mostrar datos locales de inmediato — no esperar a Supabase
+  buildHerramie
